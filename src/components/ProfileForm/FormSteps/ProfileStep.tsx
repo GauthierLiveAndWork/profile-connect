@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Briefcase, Globe, Upload } from 'lucide-react';
-import { SECTORS, EXPERIENCE_LEVELS, LANGUAGES } from '@/types/profile';
+import { SECTORS, EXPERIENCE_LEVELS, LANGUAGES, LANGUAGE_LEVELS } from '@/types/profile';
 import { Button } from '@/components/ui/button';
 
 interface ProfileStepProps {
@@ -22,7 +22,7 @@ export const ProfileStep = ({ data, onUpdate }: ProfileStepProps) => {
       email: data.email || '',
       photo_url: data.photo_url || '',
       sector: data.sector || '',
-      role_title: data.role_title || '',
+      job_role: data.job_role || '',
       years_experience: data.years_experience || '',
       languages: data.languages || []
     }
@@ -158,7 +158,7 @@ export const ProfileStep = ({ data, onUpdate }: ProfileStepProps) => {
 
               <FormField
                 control={form.control}
-                name="role_title"
+                name="job_role"
                 rules={{ required: "Le rôle est requis" }}
                 render={({ field }) => (
                   <FormItem>
@@ -213,26 +213,75 @@ export const ProfileStep = ({ data, onUpdate }: ProfileStepProps) => {
               rules={{ required: "Sélectionnez au moins une langue" }}
               render={({ field }) => (
                 <FormItem>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {LANGUAGES.map((language) => (
-                      <div key={language} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={language}
-                          checked={field.value?.includes(language)}
-                          onCheckedChange={(checked) => {
-                            const current = field.value || [];
-                            if (checked) {
-                              field.onChange([...current, language]);
-                            } else {
-                              field.onChange(current.filter((l: string) => l !== language));
-                            }
+                  <FormLabel>Langues parlées *</FormLabel>
+                  <div className="space-y-4">
+                    {field.value?.map((langItem: any, index: number) => (
+                      <div key={index} className="flex gap-3 items-center p-3 border rounded-lg">
+                        <Select
+                          value={langItem.language}
+                          onValueChange={(language) => {
+                            const updated = [...(field.value || [])];
+                            updated[index] = { ...updated[index], language };
+                            field.onChange(updated);
                           }}
-                        />
-                        <label htmlFor={language} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                          {language}
-                        </label>
+                        >
+                          <SelectTrigger className="flex-1">
+                            <SelectValue placeholder="Sélectionnez une langue" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {LANGUAGES.map((language) => (
+                              <SelectItem key={language} value={language}>
+                                {language}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        
+                        <Select
+                          value={langItem.level}
+                          onValueChange={(level) => {
+                            const updated = [...(field.value || [])];
+                            updated[index] = { ...updated[index], level };
+                            field.onChange(updated);
+                          }}
+                        >
+                          <SelectTrigger className="flex-1">
+                            <SelectValue placeholder="Niveau" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {LANGUAGE_LEVELS.map((level) => (
+                              <SelectItem key={level} value={level}>
+                                {level}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const updated = field.value?.filter((_: any, i: number) => i !== index) || [];
+                            field.onChange(updated);
+                          }}
+                        >
+                          Supprimer
+                        </Button>
                       </div>
                     ))}
+                    
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        const updated = [...(field.value || []), { language: '', level: '' }];
+                        field.onChange(updated);
+                      }}
+                      className="w-full"
+                    >
+                      + Ajouter une langue
+                    </Button>
                   </div>
                   <FormMessage />
                 </FormItem>

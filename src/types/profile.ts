@@ -5,9 +5,9 @@ export interface ProfileFormData {
   email: string;
   photo_url?: string;
   sector: string;
-  role_title: string;
+  job_role: string;
   years_experience: string;
-  languages: string[];
+  languages: { language: string; level: string }[];
 
   // Section B: Compétences & Offre
   top_skills: string;
@@ -67,7 +67,21 @@ export const LANGUAGES = [
   'Français',
   'Anglais', 
   'Espagnol',
+  'Allemand',
+  'Italien',
+  'Portugais',
+  'Chinois',
+  'Japonais',
+  'Arabe',
   'Autre'
+] as const;
+
+export const LANGUAGE_LEVELS = [
+  'Débutant',
+  'Intermédiaire',
+  'Avancé',
+  'Courant',
+  'Natif'
 ] as const;
 
 export const COLLABORATION_TYPES = [

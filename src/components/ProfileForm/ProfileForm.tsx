@@ -38,7 +38,7 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
 
   const canGoNext = () => {
     switch (currentStep) {
-      case 0: return formData.first_name && formData.last_name && formData.email && formData.sector;
+      case 0: return formData.first_name && formData.last_name && formData.email && formData.sector && formData.job_role;
       case 1: return formData.top_skills && formData.training_domains && formData.value_proposition;
       case 2: return formData.current_search && formData.collaboration_type && formData.main_objectives?.length;
       case 3: return formData.work_mode && formData.work_speed && formData.favorite_tools?.length;
@@ -53,14 +53,20 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
     
     setIsSubmitting(true);
     try {
+      // Validate that all languages have both language and level selected
+      const validLanguages = formData.languages?.filter(lang => lang.language && lang.level) || [];
+      
       const bigFiveScores = calculateBigFiveScores(formData.big_five_responses || []);
+      
+      const profileData = {
+        ...formData as ProfileFormData,
+        languages: validLanguages,
+        ...bigFiveScores
+      };
       
       const { data, error } = await supabase
         .from('profiles')
-        .insert({
-          ...formData as ProfileFormData,
-          ...bigFiveScores
-        })
+        .insert(profileData)
         .select()
         .single();
 
