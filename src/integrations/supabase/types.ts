@@ -14,6 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
+      matches: {
+        Row: {
+          compatibility_score: number
+          created_at: string
+          id: string
+          profile1_id: string
+          profile2_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          compatibility_score: number
+          created_at?: string
+          id?: string
+          profile1_id: string
+          profile2_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          compatibility_score?: number
+          created_at?: string
+          id?: string
+          profile1_id?: string
+          profile2_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_profile1_id_fkey"
+            columns: ["profile1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_profile2_id_fkey"
+            columns: ["profile2_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          match_id: string
+          sender_profile_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          match_id: string
+          sender_profile_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          match_id?: string
+          sender_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_profile_id_fkey"
+            columns: ["sender_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           agreeableness: number
@@ -40,6 +124,7 @@ export type Database = {
           top_skills: string
           training_domains: string
           updated_at: string
+          user_id: string | null
           value_proposition: string
           work_mode: string
           work_speed: string
@@ -70,6 +155,7 @@ export type Database = {
           top_skills: string
           training_domains: string
           updated_at?: string
+          user_id?: string | null
           value_proposition: string
           work_mode: string
           work_speed: string
@@ -100,6 +186,7 @@ export type Database = {
           top_skills?: string
           training_domains?: string
           updated_at?: string
+          user_id?: string | null
           value_proposition?: string
           work_mode?: string
           work_speed?: string
