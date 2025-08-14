@@ -113,7 +113,7 @@ export type Database = {
           first_name: string
           id: string
           job_role: string
-          languages: string[]
+          languages: Json | null
           last_name: string
           linkedin_profile: string | null
           main_objectives: string[]
@@ -144,7 +144,7 @@ export type Database = {
           first_name: string
           id?: string
           job_role: string
-          languages?: string[]
+          languages?: Json | null
           last_name: string
           linkedin_profile?: string | null
           main_objectives?: string[]
@@ -175,7 +175,7 @@ export type Database = {
           first_name?: string
           id?: string
           job_role?: string
-          languages?: string[]
+          languages?: Json | null
           last_name?: string
           linkedin_profile?: string | null
           main_objectives?: string[]
