@@ -3,11 +3,11 @@ import { useForm } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { User, Briefcase, Globe, Upload } from 'lucide-react';
 import { SECTORS, EXPERIENCE_LEVELS, LANGUAGES, LANGUAGE_LEVELS } from '@/types/profile';
-import { Button } from '@/components/ui/button';
 
 interface ProfileStepProps {
   data: any;
@@ -21,10 +21,14 @@ export const ProfileStep = ({ data, onUpdate }: ProfileStepProps) => {
       last_name: data.last_name || '',
       email: data.email || '',
       photo_url: data.photo_url || '',
+      location: data.location || '',
       sector: data.sector || '',
       job_role: data.job_role || '',
       years_experience: data.years_experience || '',
-      languages: data.languages || []
+      languages: data.languages || [],
+      bio: data.bio || '',
+      favorite_quote: data.favorite_quote || '',
+      punchline: data.punchline || ''
     }
   });
 
@@ -94,6 +98,20 @@ export const ProfileStep = ({ data, onUpdate }: ProfileStepProps) => {
                     <FormLabel>Email *</FormLabel>
                     <FormControl>
                       <Input type="email" placeholder="votre@email.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>Localisation</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ville, Pays" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -288,6 +306,57 @@ export const ProfileStep = ({ data, onUpdate }: ProfileStepProps) => {
               )}
             />
           </CardContent>
+        </Card>
+
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">À propos de vous</h3>
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Biographie</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Parlez-nous de vous, votre parcours, vos passions..."
+                      rows={4}
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="favorite_quote"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Citation favorite</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Une citation qui vous inspire..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="punchline"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Punchline</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Votre phrase d'accroche personnelle..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </Card>
       </form>
     </Form>

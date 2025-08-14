@@ -7,6 +7,8 @@ import { SkillsStep } from './FormSteps/SkillsStep';
 import { NeedsStep } from './FormSteps/NeedsStep';
 import { PreferencesStep } from './FormSteps/PreferencesStep';
 import { BigFiveStep } from './FormSteps/BigFiveStep';
+import { IdentityStep } from './FormSteps/IdentityStep';
+import { MatchingStep } from './FormSteps/MatchingStep';
 import { NetworkStep } from './FormSteps/NetworkStep';
 import { calculateBigFiveScores } from '@/utils/bigFive';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,6 +21,8 @@ const STEPS = [
   { title: 'Besoins', description: 'Ce que vous recherchez et vos objectifs' },
   { title: 'Préférences', description: 'Votre style de travail et outils favoris' },
   { title: 'Personnalité', description: 'Test Big Five pour mieux vous connaître' },
+  { title: 'Identité', description: 'Vos badges et valeurs' },
+  { title: 'Matching', description: 'Informations pour le matching' },
   { title: 'Réseau', description: 'Vos références et profils professionnels' }
 ];
 
@@ -43,7 +47,9 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
       case 2: return formData.current_search && formData.collaboration_type && formData.main_objectives?.length;
       case 3: return formData.work_mode && formData.work_speed && formData.favorite_tools?.length;
       case 4: return formData.big_five_responses?.every(r => r !== null && r !== undefined);
-      case 5: return true;
+      case 5: return formData.sector_badges?.length || formData.community_badges?.length;
+      case 6: return true; // Matching step is optional
+      case 7: return true; // Network step is optional
       default: return false;
     }
   };
@@ -102,7 +108,9 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
       case 2: return <NeedsStep {...props} />;
       case 3: return <PreferencesStep {...props} />;
       case 4: return <BigFiveStep {...props} />;
-      case 5: return <NetworkStep {...props} />;
+      case 5: return <IdentityStep {...props} />;
+      case 6: return <MatchingStep {...props} />;
+      case 7: return <NetworkStep {...props} />;
       default: return null;
     }
   };

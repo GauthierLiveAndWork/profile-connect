@@ -102,13 +102,18 @@ export type Database = {
         Row: {
           agreeableness: number
           big_five_responses: number[]
+          bio: string | null
           collaboration_type: string
+          community_badges: string[] | null
           conscientiousness: number
+          core_values: string[] | null
           created_at: string
+          current_projects: string | null
           current_search: string
           email: string
           emotional_stability: number
           extraversion: number
+          favorite_quote: string | null
           favorite_tools: string[]
           first_name: string
           id: string
@@ -116,30 +121,43 @@ export type Database = {
           languages: Json | null
           last_name: string
           linkedin_profile: string | null
+          location: string | null
           main_objectives: string[]
+          offer_tags: string[] | null
           openness: number
           photo_url: string | null
           professional_references: string | null
+          punchline: string | null
+          search_tags: string[] | null
           sector: string
+          sector_badges: string[] | null
           top_skills: string
           training_domains: string
           updated_at: string
           user_id: string | null
           value_proposition: string
+          vision: string | null
           work_mode: string
+          work_rhythm_details: string | null
           work_speed: string
+          work_style_details: string | null
           years_experience: string
         }
         Insert: {
           agreeableness: number
           big_five_responses?: number[]
+          bio?: string | null
           collaboration_type: string
+          community_badges?: string[] | null
           conscientiousness: number
+          core_values?: string[] | null
           created_at?: string
+          current_projects?: string | null
           current_search: string
           email: string
           emotional_stability: number
           extraversion: number
+          favorite_quote?: string | null
           favorite_tools?: string[]
           first_name: string
           id?: string
@@ -147,30 +165,43 @@ export type Database = {
           languages?: Json | null
           last_name: string
           linkedin_profile?: string | null
+          location?: string | null
           main_objectives?: string[]
+          offer_tags?: string[] | null
           openness: number
           photo_url?: string | null
           professional_references?: string | null
+          punchline?: string | null
+          search_tags?: string[] | null
           sector: string
+          sector_badges?: string[] | null
           top_skills: string
           training_domains: string
           updated_at?: string
           user_id?: string | null
           value_proposition: string
+          vision?: string | null
           work_mode: string
+          work_rhythm_details?: string | null
           work_speed: string
+          work_style_details?: string | null
           years_experience: string
         }
         Update: {
           agreeableness?: number
           big_five_responses?: number[]
+          bio?: string | null
           collaboration_type?: string
+          community_badges?: string[] | null
           conscientiousness?: number
+          core_values?: string[] | null
           created_at?: string
+          current_projects?: string | null
           current_search?: string
           email?: string
           emotional_stability?: number
           extraversion?: number
+          favorite_quote?: string | null
           favorite_tools?: string[]
           first_name?: string
           id?: string
@@ -178,18 +209,26 @@ export type Database = {
           languages?: Json | null
           last_name?: string
           linkedin_profile?: string | null
+          location?: string | null
           main_objectives?: string[]
+          offer_tags?: string[] | null
           openness?: number
           photo_url?: string | null
           professional_references?: string | null
+          punchline?: string | null
+          search_tags?: string[] | null
           sector?: string
+          sector_badges?: string[] | null
           top_skills?: string
           training_domains?: string
           updated_at?: string
           user_id?: string | null
           value_proposition?: string
+          vision?: string | null
           work_mode?: string
+          work_rhythm_details?: string | null
           work_speed?: string
+          work_style_details?: string | null
           years_experience?: string
         }
         Relationships: []
