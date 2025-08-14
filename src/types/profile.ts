@@ -4,20 +4,27 @@ export interface ProfileFormData {
   last_name: string;
   email: string;
   photo_url?: string;
+  location?: string;
   sector: string;
   job_role: string;
   years_experience: string;
   languages: { language: string; level: string }[];
+  bio?: string;
+  favorite_quote?: string;
+  punchline?: string;
 
   // Section B: Compétences & Offre
   top_skills: string;
   training_domains: string;
   value_proposition: string;
-
+  offer_tags: string[];
+  
   // Section C: Besoins & Objectifs
   current_search: string;
   collaboration_type: string;
   main_objectives: string[];
+  search_tags: string[];
+  current_projects?: string;
 
   // Section D: Préférences de collaboration
   work_mode: string;
@@ -30,6 +37,14 @@ export interface ProfileFormData {
   // Section F: Réseau & Confiance
   linkedin_profile?: string;
   professional_references?: string;
+
+  // Section G: Identité & Valeurs
+  sector_badges: string[];
+  community_badges: string[];
+  core_values: string[];
+  vision?: string;
+  work_style_details?: string;
+  work_rhythm_details?: string;
 }
 
 export interface BigFiveScores {
@@ -118,6 +133,88 @@ export const FAVORITE_TOOLS = [
   'Google Meet',
   'Trello',
   'Autre'
+] as const;
+
+export const SECTOR_BADGES = [
+  'Développement durable',
+  'Technologie / SaaS',
+  'Consulting / Stratégie',
+  'Design / UX',
+  'Bien-être / Santé mentale',
+  'Education / EdTech',
+  'Marketing digital',
+  'Edition / Média',
+  'E-commerce',
+  'Finance / FinTech',
+  'Immobilier / PropTech',
+  'Gaming / Metavers',
+  'Artisanat / Makers',
+  'Voyage / Nomadisme',
+  'Culture / Art',
+  'Communication / RP',
+  'Secteur public / Civic Tech',
+  'Intelligence Artificielle',
+  'Coaching / Développement personnel',
+  'Sécurité / Safety',
+  'Styliste',
+  'Designer textile',
+  'Modéliste',
+  'Créateur de mode éthique',
+  'Maquilleur / Make-up artist',
+  'Coiffeur / Hair stylist',
+  'Esthéticien(ne)',
+  'Prothésiste ongulaire',
+  'Spa & bien-être',
+  'Retoucheur photo',
+  'Vidéaste beauté',
+  'Influenceur mode/beauty',
+  'Community manager (Mode/Beauté)',
+  'Brand strategist',
+  'Visual merchandiser',
+  'Organisateur de défilés',
+  'Mannequin / Modèle',
+  'Bookeur / Agent artistique',
+  'Mode écoresponsable',
+  'Cosmétique naturelle',
+  'Innovation textile'
+] as const;
+
+export const COMMUNITY_BADGES = [
+  'Indie Hacker',
+  'Digital Nomad',
+  'Étudiant-entrepreneur',
+  'Eco-entrepreneur',
+  'Créatif-ve freelance',
+  'Co-founder cherche associé',
+  'Mentor / Coach',
+  'No-code builder',
+  'Research-driven project',
+  'Side project lover',
+  'Slowpreneure',
+  'Business Hacker',
+  'Premier projet entrepreneurial',
+  'Porteur d\'impact local',
+  'Beta-testeur volontaire',
+  'Podcaster / Créateur de contenu',
+  'Visionnaire / Idéaliste'
+] as const;
+
+export const CORE_VALUES = [
+  'Authenticité',
+  'Innovation', 
+  'Collaboration',
+  'Excellence',
+  'Impact social',
+  'Durabilité',
+  'Transparence',
+  'Créativité',
+  'Efficacité',
+  'Bienveillance',
+  'Liberté',
+  'Qualité',
+  'Respect',
+  'Équité',
+  'Responsabilité'
 ] as const;
 
 export const BIG_FIVE_QUESTIONS = [
