@@ -14,7 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          agreeableness: number
+          big_five_responses: number[]
+          collaboration_type: string
+          conscientiousness: number
+          created_at: string
+          current_search: string
+          email: string
+          emotional_stability: number
+          extraversion: number
+          favorite_tools: string[]
+          first_name: string
+          id: string
+          job_role: string
+          languages: string[]
+          last_name: string
+          linkedin_profile: string | null
+          main_objectives: string[]
+          openness: number
+          photo_url: string | null
+          professional_references: string | null
+          sector: string
+          top_skills: string
+          training_domains: string
+          updated_at: string
+          value_proposition: string
+          work_mode: string
+          work_speed: string
+          years_experience: string
+        }
+        Insert: {
+          agreeableness: number
+          big_five_responses?: number[]
+          collaboration_type: string
+          conscientiousness: number
+          created_at?: string
+          current_search: string
+          email: string
+          emotional_stability: number
+          extraversion: number
+          favorite_tools?: string[]
+          first_name: string
+          id?: string
+          job_role: string
+          languages?: string[]
+          last_name: string
+          linkedin_profile?: string | null
+          main_objectives?: string[]
+          openness: number
+          photo_url?: string | null
+          professional_references?: string | null
+          sector: string
+          top_skills: string
+          training_domains: string
+          updated_at?: string
+          value_proposition: string
+          work_mode: string
+          work_speed: string
+          years_experience: string
+        }
+        Update: {
+          agreeableness?: number
+          big_five_responses?: number[]
+          collaboration_type?: string
+          conscientiousness?: number
+          created_at?: string
+          current_search?: string
+          email?: string
+          emotional_stability?: number
+          extraversion?: number
+          favorite_tools?: string[]
+          first_name?: string
+          id?: string
+          job_role?: string
+          languages?: string[]
+          last_name?: string
+          linkedin_profile?: string | null
+          main_objectives?: string[]
+          openness?: number
+          photo_url?: string | null
+          professional_references?: string | null
+          sector?: string
+          top_skills?: string
+          training_domains?: string
+          updated_at?: string
+          value_proposition?: string
+          work_mode?: string
+          work_speed?: string
+          years_experience?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
