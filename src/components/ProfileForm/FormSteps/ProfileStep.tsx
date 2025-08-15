@@ -6,7 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Briefcase, Globe, Upload } from 'lucide-react';
+import { PhotoUpload } from '@/components/ui/photo-upload';
+import { User, Briefcase, Globe } from 'lucide-react';
 import { SECTORS, EXPERIENCE_LEVELS, LANGUAGES, LANGUAGE_LEVELS } from '@/types/profile';
 
 interface ProfileStepProps {
@@ -125,12 +126,10 @@ export const ProfileStep = ({ data, onUpdate }: ProfileStepProps) => {
                   <FormItem className="md:col-span-2">
                     <FormLabel>Photo professionnelle (optionnel)</FormLabel>
                     <FormControl>
-                      <div className="flex gap-2">
-                        <Input placeholder="URL de votre photo" {...field} />
-                        <Button type="button" variant="outline" size="icon">
-                          <Upload className="w-4 h-4" />
-                        </Button>
-                      </div>
+                      <PhotoUpload 
+                        value={field.value} 
+                        onChange={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
