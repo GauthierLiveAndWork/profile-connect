@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ProfileForm } from '@/components/ProfileForm/ProfileForm';
+import { ProfileDisplay } from '@/components/ProfileDisplay/ProfileDisplay';
 import { Users, Target, BarChart3 } from 'lucide-react';
 
 const Index = () => {
@@ -8,14 +9,7 @@ const Index = () => {
   const [profileId, setProfileId] = useState<string | null>(null);
 
   if (profileId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Profil créé avec succès !</h1>
-          <p className="text-xl text-muted-foreground">Votre profil Big Five est maintenant disponible.</p>
-        </div>
-      </div>
-    );
+    return <ProfileDisplay profileId={profileId} />;
   }
 
   if (showForm) {
