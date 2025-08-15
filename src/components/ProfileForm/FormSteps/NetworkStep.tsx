@@ -23,7 +23,7 @@ export const NetworkStep = ({ data, onUpdate }: NetworkStepProps) => {
   const watchedFields = form.watch();
   React.useEffect(() => {
     onUpdate(watchedFields);
-  }, [watchedFields, onUpdate]);
+  }, [JSON.stringify(watchedFields), onUpdate]);
 
   return (
     <Form {...form}>
