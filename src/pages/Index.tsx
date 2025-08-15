@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ProfileForm } from '@/components/ProfileForm/ProfileForm';
 import { ProfileDisplay } from '@/components/ProfileDisplay/ProfileDisplay';
-import { Users, Target, BarChart3 } from 'lucide-react';
+import { Users, Target, BarChart3, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const [showForm, setShowForm] = useState(false);
@@ -21,6 +22,14 @@ const Index = () => {
       {/* Hero Section */}
       <section className="gradient-hero text-white py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
+          <div className="flex justify-end mb-4">
+            <Link to="/admin">
+              <Button variant="outline" size="sm" className="gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20">
+                <Settings className="w-4 h-4" />
+                Admin
+              </Button>
+            </Link>
+          </div>
           <h1 className="text-5xl font-bold mb-6">
             Live&Work – Connectez-vous aux bons partenaires
           </h1>

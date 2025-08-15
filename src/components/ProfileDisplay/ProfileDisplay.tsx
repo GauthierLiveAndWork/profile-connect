@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, Mail, Briefcase, Globe, Users, Target, Brain } from 'lucide-react';
 import { BigFiveRadarChart } from './BigFiveRadarChart';
 import { ShareProfile } from './ShareProfile';
+import { EmailProfileButton } from './EmailProfileButton';
 import { ProfileFormData } from '@/types/profile';
 
 interface ProfileDisplayProps {
@@ -123,10 +124,17 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
                   <p className="text-xl opacity-90 mb-4">{profile.job_role}</p>
                 </div>
                 {!isPublic && (
-                  <ShareProfile 
-                    profileId={profileId} 
-                    profileName={`${profile.first_name} ${profile.last_name}`} 
-                  />
+                  <div className="flex gap-2">
+                    <EmailProfileButton 
+                      profileId={profileId} 
+                      profileName={`${profile.first_name} ${profile.last_name}`}
+                      defaultEmail={profile.email || ''}
+                    />
+                    <ShareProfile 
+                      profileId={profileId} 
+                      profileName={`${profile.first_name} ${profile.last_name}`} 
+                    />
+                  </div>
                 )}
               </div>
               
