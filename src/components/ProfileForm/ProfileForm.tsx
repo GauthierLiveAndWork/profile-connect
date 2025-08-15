@@ -68,11 +68,21 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
       
       const bigFiveScores = calculateBigFiveScores(formData.big_five_responses || []);
       
+      // Prepare profile data with proper defaults
       const profileData = {
         ...formData as ProfileFormData,
         languages: validLanguages,
+        offer_tags: formData.offer_tags || [],
+        search_tags: formData.search_tags || [],
+        sector_badges: formData.sector_badges || [],
+        community_badges: formData.community_badges || [],
+        core_values: formData.core_values || [],
+        main_objectives: formData.main_objectives || [],
+        favorite_tools: formData.favorite_tools || [],
         ...bigFiveScores
       };
+      
+      console.log('Submitting profile data:', profileData);
       
       const { data, error } = await supabase
         .from('profiles')
@@ -80,7 +90,10 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       // Clear form data from localStorage
       localStorage.removeItem('livework-form-data');
@@ -95,7 +108,7 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
       console.error('Error creating profile:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de la création de votre profil.",
+        description: "Une erreur est survenue lors de la création de votre profil. Vérifiez que tous les champs obligatoires sont remplis.",
         variant: "destructive"
       });
     } finally {

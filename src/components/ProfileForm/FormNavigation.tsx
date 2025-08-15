@@ -22,12 +22,12 @@ export const FormNavigation = ({
 }: FormNavigationProps) => {
   const handlePrevious = () => {
     onPrevious();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
   };
 
   const handleNext = () => {
     onNext();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
   };
 
   return (
