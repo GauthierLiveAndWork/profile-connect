@@ -63,6 +63,17 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
     
     setIsSubmitting(true);
     try {
+      // Get current user
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        toast({
+          title: "Erreur d'authentification",
+          description: "Vous devez être connecté pour créer un profil.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       // Validate that all languages have both language and level selected
       const validLanguages = formData.languages?.filter(lang => lang.language && lang.level) || [];
       
@@ -71,7 +82,7 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
       // Prepare profile data with proper defaults
       const profileData = {
         ...formData as ProfileFormData,
-        user_id: null, // Will be set by RLS policy if user is authenticated
+        user_id: user.id,
         languages: validLanguages,
         offer_tags: formData.offer_tags || [],
         search_tags: formData.search_tags || [],

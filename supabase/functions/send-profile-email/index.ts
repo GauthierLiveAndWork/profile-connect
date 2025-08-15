@@ -23,6 +23,15 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Verify JWT token for authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     const { profileId, recipientEmail, senderName }: SendProfileEmailRequest = await req.json();
 
     // Initialize Supabase client

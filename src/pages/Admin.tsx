@@ -42,14 +42,9 @@ export const Admin = () => {
 
   const checkAdminAccess = async () => {
     try {
-      // For simplicity, we'll check if the user has the admin email
-      // In a real app, you'd want proper authentication
-      const adminEmail = 'gauthierwagneur@hotmail.com';
-      
-      // You can implement proper auth check here
-      // For now, we'll allow access based on a simple check
-      setIsAdmin(true);
-      
+      const { data, error } = await supabase.rpc('is_admin_user');
+      if (error) throw error;
+      setIsAdmin(data || false);
     } catch (error) {
       console.error('Error checking admin access:', error);
       setIsAdmin(false);
