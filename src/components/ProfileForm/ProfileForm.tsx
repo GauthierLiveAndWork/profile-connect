@@ -41,6 +41,9 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
   };
 
   const canGoNext = () => {
+    // For the last step, always allow finishing
+    if (currentStep === STEPS.length - 1) return true;
+    
     switch (currentStep) {
       case 0: return formData.first_name && formData.last_name && formData.email && formData.sector && formData.job_role;
       case 1: return formData.top_skills && formData.training_domains && formData.value_proposition;
