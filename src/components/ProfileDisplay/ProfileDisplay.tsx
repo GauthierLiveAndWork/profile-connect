@@ -6,10 +6,12 @@ import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, Mail, Briefcase, Globe, Users, Target, Brain } from 'lucide-react';
 import { BigFiveRadarChart } from './BigFiveRadarChart';
+import { ShareProfile } from './ShareProfile';
 import { ProfileFormData } from '@/types/profile';
 
 interface ProfileDisplayProps {
   profileId: string;
+  isPublic?: boolean;
 }
 
 interface DatabaseProfile {
@@ -44,7 +46,7 @@ interface DatabaseProfile {
   languages?: any;
 }
 
-export const ProfileDisplay = ({ profileId }: ProfileDisplayProps) => {
+export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayProps) => {
   const [profile, setProfile] = useState<DatabaseProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -113,10 +115,20 @@ export const ProfileDisplay = ({ profileId }: ProfileDisplayProps) => {
             </Avatar>
             
             <div className="text-center md:text-left flex-1">
-              <h1 className="text-4xl font-bold mb-2">
-                {profile.first_name} {profile.last_name}
-              </h1>
-              <p className="text-xl opacity-90 mb-4">{profile.job_role}</p>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h1 className="text-4xl font-bold mb-2">
+                    {profile.first_name} {profile.last_name}
+                  </h1>
+                  <p className="text-xl opacity-90 mb-4">{profile.job_role}</p>
+                </div>
+                {!isPublic && (
+                  <ShareProfile 
+                    profileId={profileId} 
+                    profileName={`${profile.first_name} ${profile.last_name}`} 
+                  />
+                )}
+              </div>
               
               <div className="flex flex-wrap gap-4 justify-center md:justify-start text-sm">
                 {profile.location && (
