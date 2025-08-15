@@ -53,40 +53,11 @@ export const IdentityStep = ({ data, onUpdate }: IdentityStepProps) => {
             <h3 className="text-lg font-semibold mb-4">Badges identitaires</h3>
             <p className="text-muted-foreground mb-6">Sélectionnez les badges qui vous représentent le mieux (5 maximum par catégorie)</p>
             
-            <Tabs defaultValue="sectoriels" className="w-full">
+            <Tabs defaultValue="communautes" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="sectoriels">Sectoriels</TabsTrigger>
                 <TabsTrigger value="communautes">Communautés</TabsTrigger>
+                <TabsTrigger value="sectoriels">Sectoriels</TabsTrigger>
               </TabsList>
-              
-              <TabsContent value="sectoriels" className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="sector_badges"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Badges sectoriels ({field.value?.length || 0}/5)</FormLabel>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                        {SECTOR_BADGES.map((badge) => (
-                          <Badge
-                            key={badge}
-                            variant={field.value?.includes(badge) ? "default" : "outline"}
-                            className="cursor-pointer p-2 text-center justify-center hover:bg-primary/10"
-                            onClick={() => {
-                              if (field.value?.length < 5 || field.value?.includes(badge)) {
-                                toggleBadge('sector_badges', badge);
-                              }
-                            }}
-                          >
-                            {badge}
-                          </Badge>
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TabsContent>
               
               <TabsContent value="communautes" className="space-y-4">
                 <FormField
@@ -104,6 +75,35 @@ export const IdentityStep = ({ data, onUpdate }: IdentityStepProps) => {
                             onClick={() => {
                               if (field.value?.length < 5 || field.value?.includes(badge)) {
                                 toggleBadge('community_badges', badge);
+                              }
+                            }}
+                          >
+                            {badge}
+                          </Badge>
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+              
+              <TabsContent value="sectoriels" className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="sector_badges"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Badges sectoriels ({field.value?.length || 0}/5)</FormLabel>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        {SECTOR_BADGES.map((badge) => (
+                          <Badge
+                            key={badge}
+                            variant={field.value?.includes(badge) ? "default" : "outline"}
+                            className="cursor-pointer p-2 text-center justify-center hover:bg-primary/10"
+                            onClick={() => {
+                              if (field.value?.length < 5 || field.value?.includes(badge)) {
+                                toggleBadge('sector_badges', badge);
                               }
                             }}
                           >
