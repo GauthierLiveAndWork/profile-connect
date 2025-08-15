@@ -110,7 +110,7 @@ export type Database = {
           created_at: string
           current_projects: string | null
           current_search: string
-          email: string
+          email: string | null
           emotional_stability: number
           extraversion: number
           favorite_quote: string | null
@@ -154,7 +154,7 @@ export type Database = {
           created_at?: string
           current_projects?: string | null
           current_search: string
-          email: string
+          email?: string | null
           emotional_stability: number
           extraversion: number
           favorite_quote?: string | null
@@ -198,7 +198,7 @@ export type Database = {
           created_at?: string
           current_projects?: string | null
           current_search?: string
-          email?: string
+          email?: string | null
           emotional_stability?: number
           extraversion?: number
           favorite_quote?: string | null

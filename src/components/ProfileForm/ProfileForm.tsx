@@ -46,7 +46,7 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
 
   const canGoNext = () => {
     switch (currentStep) {
-      case 0: return formData.first_name && formData.last_name && formData.email && formData.sector && formData.job_role;
+      case 0: return formData.first_name && formData.last_name && formData.sector && formData.job_role;
       case 1: return formData.top_skills && formData.training_domains && formData.value_proposition;
       case 2: return formData.current_search && formData.collaboration_type && formData.main_objectives?.length;
       case 3: return formData.work_mode && formData.work_speed && formData.favorite_tools?.length;
@@ -95,7 +95,7 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         console.error('Supabase error:', error);
         
         // Handle duplicate email error specifically
-        if (error.code === '23505' && error.message.includes('profiles_email_key')) {
+        if (error.code === '23505' && error.message.includes('profiles_email_unique_idx')) {
           toast({
             title: "Email déjà utilisé",
             description: "Un profil avec cette adresse email existe déjà. Veuillez utiliser une autre adresse email.",
