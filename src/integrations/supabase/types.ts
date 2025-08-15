@@ -141,6 +141,7 @@ export type Database = {
           favorite_tools: string[]
           first_name: string
           id: string
+          is_public: boolean
           job_role: string
           languages: Json | null
           last_name: string
@@ -185,6 +186,7 @@ export type Database = {
           favorite_tools?: string[]
           first_name: string
           id?: string
+          is_public?: boolean
           job_role: string
           languages?: Json | null
           last_name: string
@@ -229,6 +231,7 @@ export type Database = {
           favorite_tools?: string[]
           first_name?: string
           id?: string
+          is_public?: boolean
           job_role?: string
           languages?: Json | null
           last_name?: string
@@ -262,7 +265,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin_user: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
