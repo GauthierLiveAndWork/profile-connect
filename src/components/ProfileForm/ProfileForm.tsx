@@ -93,6 +93,17 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
 
       if (error) {
         console.error('Supabase error:', error);
+        
+        // Handle duplicate email error specifically
+        if (error.code === '23505' && error.message.includes('profiles_email_key')) {
+          toast({
+            title: "Email déjà utilisé",
+            description: "Un profil avec cette adresse email existe déjà. Veuillez utiliser une autre adresse email.",
+            variant: "destructive"
+          });
+          return;
+        }
+        
         throw error;
       }
 
