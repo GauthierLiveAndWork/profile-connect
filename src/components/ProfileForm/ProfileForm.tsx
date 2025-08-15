@@ -37,7 +37,11 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
   const { toast } = useToast();
 
   const updateStepData = (stepData: any) => {
-    setFormData(prev => ({ ...prev, ...stepData }));
+    setFormData(prev => {
+      const newData = { ...prev, ...stepData };
+      console.log('Données sauvegardées automatiquement');
+      return newData;
+    });
   };
 
   const canGoNext = () => {
@@ -123,6 +127,13 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         stepTitle={STEPS[currentStep].title}
         stepDescription={STEPS[currentStep].description}
       />
+
+      {/* Indicateur de sauvegarde automatique */}
+      <div className="mb-4 text-center">
+        <p className="text-sm text-muted-foreground">
+          ✅ Vos données sont automatiquement sauvegardées à chaque modification
+        </p>
+      </div>
 
       <div className="mb-8">
         {renderStep()}
