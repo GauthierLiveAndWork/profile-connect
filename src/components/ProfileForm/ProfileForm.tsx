@@ -71,6 +71,7 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
       // Prepare profile data with proper defaults
       const profileData = {
         ...formData as ProfileFormData,
+        user_id: null, // Will be set by RLS policy if user is authenticated
         languages: validLanguages,
         offer_tags: formData.offer_tags || [],
         search_tags: formData.search_tags || [],
