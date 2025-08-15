@@ -18,12 +18,22 @@ export const FormNavigation = ({
   canGoNext,
   isLastStep
 }: FormNavigationProps) => {
+  const handlePrevious = () => {
+    onPrevious();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNext = () => {
+    onNext();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="flex justify-between items-center pt-6 border-t">
       <Button
         type="button"
         variant="outline"
-        onClick={onPrevious}
+        onClick={handlePrevious}
         disabled={currentStep === 0}
         className="flex items-center gap-2"
       >
@@ -37,7 +47,7 @@ export const FormNavigation = ({
 
       <Button
         type={isLastStep ? "submit" : "button"}
-        onClick={isLastStep ? undefined : onNext}
+        onClick={isLastStep ? undefined : handleNext}
         disabled={!canGoNext}
         className="flex items-center gap-2"
       >
