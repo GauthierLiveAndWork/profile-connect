@@ -6,6 +6,7 @@ interface FormNavigationProps {
   totalSteps: number;
   onPrevious: () => void;
   onNext: () => void;
+  onSubmit?: () => void;
   canGoNext: boolean;
   isLastStep: boolean;
 }
@@ -15,6 +16,7 @@ export const FormNavigation = ({
   totalSteps,
   onPrevious,
   onNext,
+  onSubmit,
   canGoNext,
   isLastStep
 }: FormNavigationProps) => {
@@ -46,8 +48,8 @@ export const FormNavigation = ({
       </div>
 
       <Button
-        type={isLastStep ? "submit" : "button"}
-        onClick={isLastStep ? undefined : handleNext}
+        type="button"
+        onClick={isLastStep ? onSubmit : handleNext}
         disabled={!canGoNext}
         className="flex items-center gap-2"
       >

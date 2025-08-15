@@ -47,7 +47,7 @@ export const BigFiveStep = ({ data, onUpdate }: BigFiveStepProps) => {
               Il n'y a pas de bonnes ou de mauvaises réponses, répondez de manière spontanée.
             </p>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               {BIG_FIVE_QUESTIONS.map((question, index) => (
                 <FormField
                   key={question.id}
@@ -56,31 +56,37 @@ export const BigFiveStep = ({ data, onUpdate }: BigFiveStepProps) => {
                   rules={{ required: "Veuillez répondre à cette question" }}
                   render={({ field }) => (
                     <FormItem>
-                      <div className="space-y-3">
-                        <FormLabel className="text-base font-medium">
-                          {question.id}. {question.text}
-                        </FormLabel>
-                        <FormControl>
-                          <RadioGroup
-                            onValueChange={(value) => field.onChange(parseInt(value))}
-                            value={field.value?.toString()}
-                            className="grid grid-cols-1 md:grid-cols-5 gap-2"
-                          >
-                            {[1, 2, 3, 4, 5].map((value) => (
-                              <div key={value} className="flex items-center space-x-2">
-                                <RadioGroupItem value={value.toString()} id={`q${question.id}-${value}`} />
-                                <label 
-                                  htmlFor={`q${question.id}-${value}`}
-                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                                >
-                                  {value} - {likertLabels[value - 1]}
-                                </label>
-                              </div>
-                            ))}
-                          </RadioGroup>
-                        </FormControl>
-                        <FormMessage />
-                      </div>
+                      <Card className="border border-border/50">
+                        <CardContent className="p-6">
+                          <div className="space-y-4">
+                            <FormLabel className="text-lg font-semibold text-foreground">
+                              {question.id}. {question.text}
+                            </FormLabel>
+                            <FormControl>
+                              <RadioGroup
+                                onValueChange={(value) => field.onChange(parseInt(value))}
+                                value={field.value?.toString()}
+                                className="space-y-3"
+                              >
+                                {[1, 2, 3, 4, 5].map((value) => (
+                                  <div key={value} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                                    <RadioGroupItem value={value.toString()} id={`q${question.id}-${value}`} />
+                                    <label 
+                                      htmlFor={`q${question.id}-${value}`}
+                                      className="text-base font-medium leading-relaxed cursor-pointer flex-1"
+                                    >
+                                      <span className="inline-block w-6 text-primary font-semibold">{value}</span>
+                                      <span className="text-muted-foreground"> - </span>
+                                      <span>{likertLabels[value - 1]}</span>
+                                    </label>
+                                  </div>
+                                ))}
+                              </RadioGroup>
+                            </FormControl>
+                            <FormMessage />
+                          </div>
+                        </CardContent>
+                      </Card>
                     </FormItem>
                   )}
                 />

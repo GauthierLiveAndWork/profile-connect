@@ -132,7 +132,8 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         currentStep={currentStep}
         totalSteps={STEPS.length}
         onPrevious={() => setCurrentStep(prev => Math.max(0, prev - 1))}
-        onNext={currentStep === STEPS.length - 1 ? handleSubmit : () => setCurrentStep(prev => prev + 1)}
+        onNext={() => setCurrentStep(prev => prev + 1)}
+        onSubmit={handleSubmit}
         canGoNext={canGoNext() && !isSubmitting}
         isLastStep={currentStep === STEPS.length - 1}
       />
