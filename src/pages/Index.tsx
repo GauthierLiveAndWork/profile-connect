@@ -118,22 +118,14 @@ const Index = () => {
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex justify-end gap-2 mb-4">
             <Link to="/matching-test">
-              <Button 
-                size="sm" 
-                className="gap-2 bg-white/20 border border-white/40 text-white hover:bg-white/30 font-medium"
-                style={{ color: 'white', backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
-              >
-                <Users className="w-4 h-4" style={{ color: 'white' }} />
+              <Button size="sm" className="gap-2 bg-white text-primary hover:bg-white/90">
+                <Users className="w-4 h-4" />
                 Test Matching
               </Button>
             </Link>
             <Link to="/admin">
-              <Button 
-                size="sm" 
-                className="gap-2 bg-white/20 border border-white/40 text-white hover:bg-white/30 font-medium"
-                style={{ color: 'white', backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
-              >
-                <Settings className="w-4 h-4" style={{ color: 'white' }} />
+              <Button size="sm" className="gap-2 bg-white text-primary hover:bg-white/90">
+                <Settings className="w-4 h-4" />
                 Admin
               </Button>
             </Link>
