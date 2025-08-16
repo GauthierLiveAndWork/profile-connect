@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   Shield, 
   AlertTriangle, 
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 
 const DemoLanding = () => {
+  const { isAuthenticated, signOut } = useAuth();
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -27,10 +29,32 @@ const DemoLanding = () => {
                 <p className="text-sm text-muted-foreground">Demo Platform</p>
               </div>
             </div>
-            <Badge variant="secondary" className="gap-1">
-              <CheckCircle className="w-3 h-3" />
-              Publié
-            </Badge>
+            <div className="flex items-center gap-4">
+              <Link to="/matching-test">
+                <Button variant="outline" size="sm">Test Matching</Button>
+              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link to="/app">
+                    <Button variant="outline" size="sm">Mon Profil</Button>
+                  </Link>
+                  <Link to="/admin">
+                    <Button variant="outline" size="sm">Admin</Button>
+                  </Link>
+                  <Button variant="outline" size="sm" onClick={signOut}>
+                    Déconnexion
+                  </Button>
+                </>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="outline" size="sm">Connexion</Button>
+                </Link>
+              )}
+              <Badge variant="secondary" className="gap-1">
+                <CheckCircle className="w-3 h-3" />
+                Publié
+              </Badge>
+            </div>
           </div>
         </div>
       </header>
@@ -46,14 +70,22 @@ const DemoLanding = () => {
             la complémentarité des compétences et l'intelligence artificielle.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {isAuthenticated ? (
+              <Link to="/app">
+                <Button size="lg" className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6">
+                  Mon Profil
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/auth">
+                <Button size="lg" className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6">
+                  Créer mon profil
+                </Button>
+              </Link>
+            )}
             <Link to="/matching-test">
-              <Button size="lg" className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6">
-                Tester le Matching
-              </Button>
-            </Link>
-            <Link to="/profile/demo">
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/20 text-lg px-8 py-6">
-                Voir un Profil
+                Tester le Matching
               </Button>
             </Link>
           </div>
