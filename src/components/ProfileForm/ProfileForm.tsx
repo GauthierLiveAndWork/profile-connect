@@ -63,13 +63,23 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
   };
 
   const handlePreview = async () => {
-    if (!canGoNext() || isSubmitting) return;
+    console.log('handlePreview called, canGoNext:', canGoNext(), 'isSubmitting:', isSubmitting);
+    console.log('formData:', formData);
+    
+    if (!canGoNext() || isSubmitting) {
+      console.log('Cannot proceed with preview: canGoNext =', canGoNext(), 'isSubmitting =', isSubmitting);
+      return;
+    }
     
     setIsSubmitting(true);
     try {
+      console.log('Getting current user...');
       // Get current user
       const { data: { user }, error: authError } = await supabase.auth.getUser();
+      console.log('User data:', user, 'Auth error:', authError);
+      
       if (authError || !user) {
+        console.log('Authentication failed');
         toast({
           title: "Erreur d'authentification",
           description: "Vous devez être connecté pour prévisualiser un profil.",
@@ -78,6 +88,7 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         return;
       }
 
+      console.log('Checking for existing profile by user_id:', user.id);
       // Check if user already has a profile by user_id first
       const { data: existingProfile } = await supabase
         .from('profiles')
@@ -85,11 +96,15 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         .eq('user_id', user.id)
         .maybeSingle();
 
+      console.log('Existing profile by user_id:', existingProfile);
+
       if (existingProfile) {
+        console.log('Updating existing profile for preview...');
         // Update existing profile for preview
         await updateProfile(existingProfile.id, user);
         setPreviewProfileId(existingProfile.id);
       } else {
+        console.log('Checking for profile by email:', formData.email);
         // Check if a profile exists with the same email
         const { data: profileByEmail } = await supabase
           .from('profiles')
@@ -97,13 +112,17 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
           .eq('email', formData.email)
           .maybeSingle();
         
+        console.log('Profile by email:', profileByEmail);
+        
         if (profileByEmail) {
           // Profile exists with this email - update it if it belongs to current user
           // or if it has no user_id (legacy profile)
           if (!profileByEmail.user_id || profileByEmail.user_id === user.id) {
+            console.log('Updating profile by email...');
             await updateProfile(profileByEmail.id, user);
             setPreviewProfileId(profileByEmail.id);
           } else {
+            console.log('Email already used by another user');
             toast({
               title: "Email déjà utilisé",
               description: "Cette adresse email est déjà associée à un autre profil.",
@@ -112,14 +131,20 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
             return;
           }
         } else {
+          console.log('Creating new profile for preview...');
           // No existing profile, create new one
           const profileId = await createProfile(user, true);
+          console.log('Created profile ID:', profileId);
           if (profileId) {
             setPreviewProfileId(profileId);
+          } else {
+            console.log('Failed to create profile');
+            return;
           }
         }
       }
       
+      console.log('Opening preview with profileId:', previewProfileId);
       setPreviewOpen(true);
     } catch (error) {
       console.error('Error creating preview:', error);
