@@ -33,7 +33,7 @@ export const MatchingStep = ({ data, onUpdate }: MatchingStepProps) => {
   const watchedFields = form.watch();
   React.useEffect(() => {
     onUpdate(watchedFields);
-  }, [watchedFields]);
+  }, [watchedFields, onUpdate]);
 
   const addSearchTag = () => {
     if (searchTag.trim()) {

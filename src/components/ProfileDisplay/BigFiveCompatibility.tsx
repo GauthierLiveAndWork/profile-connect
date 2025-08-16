@@ -51,7 +51,7 @@ export const BigFiveCompatibility = ({ userScores, userId }: BigFiveCompatibilit
           agreeableness,
           emotional_stability
         `)
-        .neq('id', userId) // Exclure l'utilisateur actuel si connecté
+        .neq('id', userId || 'null') // Exclure l'utilisateur actuel si connecté
         .limit(6);
 
       if (error) {
