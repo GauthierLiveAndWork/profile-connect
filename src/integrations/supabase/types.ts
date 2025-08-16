@@ -411,6 +411,14 @@ export type Database = {
       }
     }
     Functions: {
+      check_security_definer_views: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          has_security_definer: boolean
+          schema_name: string
+          view_name: string
+        }[]
+      }
       is_admin_user: {
         Args: Record<PropertyKey, never>
         Returns: boolean
