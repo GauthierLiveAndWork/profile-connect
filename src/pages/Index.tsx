@@ -22,7 +22,13 @@ const Index = () => {
       {/* Hero Section */}
       <section className="gradient-hero text-white py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end gap-2 mb-4">
+            <Link to="/matching-test">
+              <Button variant="outline" size="sm" className="gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20">
+                <Users className="w-4 h-4" />
+                Test Matching
+              </Button>
+            </Link>
             <Link to="/admin">
               <Button variant="outline" size="sm" className="gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20">
                 <Settings className="w-4 h-4" />
