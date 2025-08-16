@@ -408,23 +408,6 @@ export type Database = {
       }
     }
     Functions: {
-      check_email_exposure: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          has_email_column: boolean
-          is_publicly_accessible: boolean
-          security_risk: string
-          table_or_view_name: string
-        }[]
-      }
-      check_security_definer_views: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          has_security_definer: boolean
-          schema_name: string
-          view_name: string
-        }[]
-      }
       get_public_profile_with_names: {
         Args: { profile_id: string }
         Returns: {
@@ -441,24 +424,6 @@ export type Database = {
       is_admin_user: {
         Args: Record<PropertyKey, never>
         Returns: boolean
-      }
-      verify_public_data_safety: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          data_type: string
-          is_exposed: boolean
-          recommendation: string
-          risk_level: string
-        }[]
-      }
-      verify_view_security: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          has_security_barrier: boolean
-          has_security_invoker: boolean
-          view_name: string
-          view_owner: string
-        }[]
       }
     }
     Enums: {
