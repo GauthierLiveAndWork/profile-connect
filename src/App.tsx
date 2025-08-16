@@ -13,28 +13,24 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => {
-  console.log('📱 App component rendering...');
-  
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
-            <Route path="/profile/:profileId" element={<PublicProfile />} />
-            <Route path="/admin" element={<AuthGuard><Admin /></AuthGuard>} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-};
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
+          <Route path="/profile/:profileId" element={<PublicProfile />} />
+          <Route path="/admin" element={<AuthGuard><Admin /></AuthGuard>} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
