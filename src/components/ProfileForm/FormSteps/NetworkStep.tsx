@@ -23,7 +23,7 @@ export const NetworkStep = ({ data, onUpdate }: NetworkStepProps) => {
   const watchedFields = form.watch();
   React.useEffect(() => {
     onUpdate(watchedFields);
-  }, [watchedFields.linkedin_profile, watchedFields.professional_references, onUpdate]);
+  }, [watchedFields.linkedin_profile, watchedFields.professional_references]);
 
   return (
     <Form {...form}>
