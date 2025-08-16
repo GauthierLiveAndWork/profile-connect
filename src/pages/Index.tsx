@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ProfileForm } from '@/components/ProfileForm/ProfileForm';
 import { ProfileDisplay } from '@/components/ProfileDisplay/ProfileDisplay';
-import { Users, Target, BarChart3, Settings } from 'lucide-react';
+import { Users, Target, BarChart3, Settings, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -10,11 +10,39 @@ const Index = () => {
   const [profileId, setProfileId] = useState<string | null>(null);
 
   if (profileId) {
-    return <ProfileDisplay profileId={profileId} />;
+    return (
+      <div>
+        <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b">
+          <div className="container mx-auto px-6 py-4">
+            <Link to="/">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                Retour à l'accueil
+              </Button>
+            </Link>
+          </div>
+        </div>
+        <ProfileDisplay profileId={profileId} />
+      </div>
+    );
   }
 
   if (showForm) {
-    return <ProfileForm onComplete={setProfileId} />;
+    return (
+      <div>
+        <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b">
+          <div className="container mx-auto px-6 py-4">
+            <Link to="/">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                Retour à l'accueil
+              </Button>
+            </Link>
+          </div>
+        </div>
+        <ProfileForm onComplete={setProfileId} />
+      </div>
+    );
   }
 
   return (
