@@ -19,7 +19,7 @@ interface DatabaseProfile {
   id: string;
   first_name: string;
   last_name: string;
-  email: string;
+  email?: string; // Made optional for public profiles
   photo_url?: string;
   location?: string;
   sector: string;
@@ -145,10 +145,12 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
                     {profile.location}
                   </div>
                 )}
-                <div className="flex items-center gap-1">
-                  <Mail className="w-4 h-4" />
-                  {profile.email}
-                </div>
+                {profile.email && (
+                  <div className="flex items-center gap-1">
+                    <Mail className="w-4 h-4" />
+                    {profile.email}
+                  </div>
+                )}
                 <div className="flex items-center gap-1">
                   <Briefcase className="w-4 h-4" />
                   {profile.sector}
