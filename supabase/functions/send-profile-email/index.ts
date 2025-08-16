@@ -54,7 +54,7 @@ const handler = async (req: Request): Promise<Response> => {
     const profileUrl = `${Deno.env.get('SUPABASE_URL')?.replace('https://', 'https://acab41b3-d497-4ba3-b9d4-f7df895f5c2d.lovableproject.com')}/profile/${profileId}`;
     
     const emailResponse = await resend.emails.send({
-      from: "LiveWork <onboarding@resend.dev>",
+      from: "LiveWork <stratellisgroup@gmail.com>",
       to: [recipientEmail],
       subject: `${profile.first_name} ${profile.last_name} a partagé son profil LiveWork avec vous`,
       html: `
