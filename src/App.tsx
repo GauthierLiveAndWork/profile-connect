@@ -10,6 +10,7 @@ import { PublicProfile } from "./pages/PublicProfile";
 import { Admin } from "./pages/Admin";
 import { Auth } from "./pages/Auth";
 import MatchingTest from "./pages/MatchingTest";
+import DemoLanding from "./pages/DemoLanding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,9 +24,9 @@ const App = () => (
         <ScrollToTop />
         <Routes>
           <Route path="/auth" element={<Auth />} />
-          <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
+          <Route path="/" element={<DemoLanding />} />
           <Route path="/profile/:profileId" element={<PublicProfile />} />
-          <Route path="/admin" element={<AuthGuard><Admin /></AuthGuard>} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/matching-test" element={<MatchingTest />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
