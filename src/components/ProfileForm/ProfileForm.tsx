@@ -90,10 +90,28 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         await updateProfile(existingProfile.id, user);
         setPreviewProfileId(existingProfile.id);
       } else {
-        // Create temporary profile for preview
-        const profileId = await createProfile(user, true);
-        if (profileId) {
-          setPreviewProfileId(profileId);
+        // For preview, try to create profile and handle email conflict gracefully
+        try {
+          const profileId = await createProfile(user, true);
+          if (profileId) {
+            setPreviewProfileId(profileId);
+          }
+        } catch (createError: any) {
+          // If email already exists, try to find and update the existing profile
+          if (createError.code === '23505') {
+            const { data: profileByEmail } = await supabase
+              .from('profiles')
+              .select('id')
+              .eq('email', formData.email)
+              .maybeSingle();
+            
+            if (profileByEmail) {
+              await updateProfile(profileByEmail.id, user);
+              setPreviewProfileId(profileByEmail.id);
+            }
+          } else {
+            throw createError;
+          }
         }
       }
       
