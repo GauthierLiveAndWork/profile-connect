@@ -273,18 +273,60 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
     const validLanguages = formData.languages?.filter(lang => lang.language && lang.level) || [];
     const bigFiveScores = calculateBigFiveScores(formData.big_five_responses || []);
     
+    // Créer un objet avec seulement les champs autorisés par la base de données
     const profileData = {
-      ...formData as ProfileFormData,
-      user_id: user.id,
+      // Section A: Profil
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email,
+      photo_url: formData.photo_url || null,
+      location: formData.location || null,
+      sector: formData.sector,
+      job_role: formData.job_role,
+      years_experience: formData.years_experience,
       languages: validLanguages,
+      bio: formData.bio || null,
+      favorite_quote: formData.favorite_quote || null,
+      punchline: formData.punchline || null,
+      
+      // Section B: Compétences & Offre
+      top_skills: formData.top_skills,
+      training_domains: formData.training_domains,
+      value_proposition: formData.value_proposition,
       offer_tags: formData.offer_tags || [],
+      
+      // Section C: Besoins & Objectifs
+      current_search: formData.current_search,
+      collaboration_type: formData.collaboration_type,
+      main_objectives: formData.main_objectives || [],
       search_tags: formData.search_tags || [],
+      current_projects: formData.current_projects || null,
+      
+      // Section D: Préférences de collaboration
+      work_mode: formData.work_mode,
+      work_speed: formData.work_speed,
+      favorite_tools: formData.favorite_tools || [],
+      
+      // Section F: Réseau & Confiance
+      linkedin_profile: formData.linkedin_profile || null,
+      professional_references: formData.professional_references || null,
+      
+      // Section G: Identité & Valeurs
       sector_badges: formData.sector_badges || [],
       community_badges: formData.community_badges || [],
       core_values: formData.core_values || [],
-      main_objectives: formData.main_objectives || [],
-      favorite_tools: formData.favorite_tools || [],
+      vision: formData.vision || null,
+      work_style_details: formData.work_style_details || null,
+      work_rhythm_details: formData.work_rhythm_details || null,
+      
+      // Big Five responses et scores
+      big_five_responses: formData.big_five_responses || [],
+      
+      // Métadonnées
+      user_id: user.id,
       is_public: true,
+      
+      // Scores Big Five calculés
       ...bigFiveScores
     };
     
