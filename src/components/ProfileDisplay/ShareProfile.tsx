@@ -84,7 +84,7 @@ export const ShareProfile = ({ profileId, profileName }: ShareProfileProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2">
+        <Button variant="secondary" className="gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20">
           <Share2 className="w-4 h-4" />
           Partager le profil
         </Button>
