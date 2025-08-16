@@ -223,7 +223,7 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         return;
       }
 
-      // Check if user already has a profile
+      // Check if user already has a profile by user_id first
       const { data: existingProfile } = await supabase
         .from('profiles')
         .select('id')
@@ -241,14 +241,41 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
           description: "Découvrez maintenant votre profil Big Five mis à jour."
         });
       } else {
-        // Create new profile
-        const newProfileId = await createProfile(user);
-        if (!newProfileId) return;
-        profileId = newProfileId;
-        toast({
-          title: "Profil créé avec succès !",
-          description: "Découvrez maintenant votre profil Big Five."
-        });
+        // Check if a profile exists with the same email
+        const { data: profileByEmail } = await supabase
+          .from('profiles')
+          .select('id, user_id')
+          .eq('email', formData.email)
+          .maybeSingle();
+        
+        if (profileByEmail) {
+          // Profile exists with this email - update it if it belongs to current user
+          // or if it has no user_id (legacy profile)
+          if (!profileByEmail.user_id || profileByEmail.user_id === user.id) {
+            await updateProfile(profileByEmail.id, user);
+            profileId = profileByEmail.id;
+            toast({
+              title: "Profil mis à jour avec succès !",
+              description: "Découvrez maintenant votre profil Big Five mis à jour."
+            });
+          } else {
+            toast({
+              title: "Email déjà utilisé",
+              description: "Cette adresse email est déjà associée à un autre profil.",
+              variant: "destructive"
+            });
+            return;
+          }
+        } else {
+          // No existing profile, create new one
+          const newProfileId = await createProfile(user);
+          if (!newProfileId) return;
+          profileId = newProfileId;
+          toast({
+            title: "Profil créé avec succès !",
+            description: "Découvrez maintenant votre profil Big Five."
+          });
+        }
       }
 
       // Clear form data from localStorage
