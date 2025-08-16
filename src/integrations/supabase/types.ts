@@ -423,6 +423,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      verify_view_security: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          has_security_barrier: boolean
+          has_security_invoker: boolean
+          view_name: string
+          view_owner: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
