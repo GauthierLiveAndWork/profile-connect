@@ -75,10 +75,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matches_profile1_id_fkey"
+            columns: ["profile1_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "matches_profile2_id_fkey"
             columns: ["profile2_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_profile2_id_fkey"
+            columns: ["profile2_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -118,6 +132,13 @@ export type Database = {
             columns: ["sender_profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_profile_id_fkey"
+            columns: ["sender_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -262,7 +283,138 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          agreeableness: number | null
+          big_five_responses: number[] | null
+          bio: string | null
+          collaboration_type: string | null
+          community_badges: string[] | null
+          conscientiousness: number | null
+          core_values: string[] | null
+          created_at: string | null
+          current_projects: string | null
+          current_search: string | null
+          emotional_stability: number | null
+          extraversion: number | null
+          favorite_quote: string | null
+          favorite_tools: string[] | null
+          first_name: string | null
+          id: string | null
+          is_public: boolean | null
+          job_role: string | null
+          languages: Json | null
+          last_name: string | null
+          linkedin_profile: string | null
+          location: string | null
+          main_objectives: string[] | null
+          offer_tags: string[] | null
+          openness: number | null
+          photo_url: string | null
+          professional_references: string | null
+          punchline: string | null
+          search_tags: string[] | null
+          sector: string | null
+          sector_badges: string[] | null
+          top_skills: string | null
+          training_domains: string | null
+          updated_at: string | null
+          value_proposition: string | null
+          vision: string | null
+          work_mode: string | null
+          work_rhythm_details: string | null
+          work_speed: string | null
+          work_style_details: string | null
+          years_experience: string | null
+        }
+        Insert: {
+          agreeableness?: number | null
+          big_five_responses?: number[] | null
+          bio?: string | null
+          collaboration_type?: string | null
+          community_badges?: string[] | null
+          conscientiousness?: number | null
+          core_values?: string[] | null
+          created_at?: string | null
+          current_projects?: string | null
+          current_search?: string | null
+          emotional_stability?: number | null
+          extraversion?: number | null
+          favorite_quote?: string | null
+          favorite_tools?: string[] | null
+          first_name?: string | null
+          id?: string | null
+          is_public?: boolean | null
+          job_role?: string | null
+          languages?: Json | null
+          last_name?: string | null
+          linkedin_profile?: string | null
+          location?: string | null
+          main_objectives?: string[] | null
+          offer_tags?: string[] | null
+          openness?: number | null
+          photo_url?: string | null
+          professional_references?: string | null
+          punchline?: string | null
+          search_tags?: string[] | null
+          sector?: string | null
+          sector_badges?: string[] | null
+          top_skills?: string | null
+          training_domains?: string | null
+          updated_at?: string | null
+          value_proposition?: string | null
+          vision?: string | null
+          work_mode?: string | null
+          work_rhythm_details?: string | null
+          work_speed?: string | null
+          work_style_details?: string | null
+          years_experience?: string | null
+        }
+        Update: {
+          agreeableness?: number | null
+          big_five_responses?: number[] | null
+          bio?: string | null
+          collaboration_type?: string | null
+          community_badges?: string[] | null
+          conscientiousness?: number | null
+          core_values?: string[] | null
+          created_at?: string | null
+          current_projects?: string | null
+          current_search?: string | null
+          emotional_stability?: number | null
+          extraversion?: number | null
+          favorite_quote?: string | null
+          favorite_tools?: string[] | null
+          first_name?: string | null
+          id?: string | null
+          is_public?: boolean | null
+          job_role?: string | null
+          languages?: Json | null
+          last_name?: string | null
+          linkedin_profile?: string | null
+          location?: string | null
+          main_objectives?: string[] | null
+          offer_tags?: string[] | null
+          openness?: number | null
+          photo_url?: string | null
+          professional_references?: string | null
+          punchline?: string | null
+          search_tags?: string[] | null
+          sector?: string | null
+          sector_badges?: string[] | null
+          top_skills?: string | null
+          training_domains?: string | null
+          updated_at?: string | null
+          value_proposition?: string | null
+          vision?: string | null
+          work_mode?: string | null
+          work_rhythm_details?: string | null
+          work_speed?: string | null
+          work_style_details?: string | null
+          years_experience?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_admin_user: {
