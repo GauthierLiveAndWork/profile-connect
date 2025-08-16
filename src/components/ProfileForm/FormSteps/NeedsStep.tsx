@@ -26,7 +26,7 @@ export const NeedsStep = ({ data, onUpdate }: NeedsStepProps) => {
   const watchedFields = form.watch();
   React.useEffect(() => {
     onUpdate(watchedFields);
-  }, [watchedFields, onUpdate]);
+  }, [watchedFields]);
 
   return (
     <Form {...form}>

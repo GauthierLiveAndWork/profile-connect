@@ -22,7 +22,7 @@ export const BigFiveStep = ({ data, onUpdate }: BigFiveStepProps) => {
   const watchedFields = form.watch();
   React.useEffect(() => {
     onUpdate(watchedFields);
-  }, [watchedFields, onUpdate]);
+  }, [watchedFields]);
 
   const likertLabels = [
     'Pas du tout d\'accord',

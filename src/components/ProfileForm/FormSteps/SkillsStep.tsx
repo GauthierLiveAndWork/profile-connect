@@ -23,7 +23,7 @@ export const SkillsStep = ({ data, onUpdate }: SkillsStepProps) => {
   const watchedFields = form.watch();
   React.useEffect(() => {
     onUpdate(watchedFields);
-  }, [watchedFields, onUpdate]);
+  }, [watchedFields]);
 
   return (
     <Form {...form}>

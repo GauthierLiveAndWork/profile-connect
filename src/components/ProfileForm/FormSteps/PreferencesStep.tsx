@@ -25,7 +25,7 @@ export const PreferencesStep = ({ data, onUpdate }: PreferencesStepProps) => {
   const watchedFields = form.watch();
   React.useEffect(() => {
     onUpdate(watchedFields);
-  }, [watchedFields, onUpdate]);
+  }, [watchedFields]);
 
   return (
     <Form {...form}>

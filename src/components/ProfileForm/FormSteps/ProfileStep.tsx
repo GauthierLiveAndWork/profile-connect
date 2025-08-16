@@ -41,7 +41,7 @@ export const ProfileStep = ({ data, onUpdate }: ProfileStepProps) => {
   const watchedFields = form.watch();
   React.useEffect(() => {
     onUpdate(watchedFields);
-  }, [watchedFields, onUpdate]);
+  }, [watchedFields]);
 
   return (
     <Form {...form}>

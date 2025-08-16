@@ -35,7 +35,7 @@ export const IdentityStep = ({ data, onUpdate }: IdentityStepProps) => {
   const watchedFields = form.watch();
   React.useEffect(() => {
     onUpdate(watchedFields);
-  }, [watchedFields, onUpdate]);
+  }, [watchedFields]);
 
   const toggleBadge = (fieldName: string, badge: string) => {
     const currentValues = form.getValues(fieldName as any) || [];
