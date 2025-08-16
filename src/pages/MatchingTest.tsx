@@ -15,8 +15,8 @@ import {
 } from 'lucide-react';
 
 const MatchingTest = () => {
-  // Simulation d'un utilisateur connecté pour la démo
-  const currentUserId = 'user_1'; // Marie Dubois
+  // Pour la démo, on peut utiliser le premier profil disponible ou un profil de test
+  const currentUserId = 'demo_user'; // ID générique pour la démo
 
   return (
     <div className="min-h-screen bg-background">
@@ -106,7 +106,7 @@ const MatchingTest = () => {
 
       {/* Dashboard */}
       <main>
-        <MatchingDashboard userId={currentUserId} />
+        <MatchingDashboard userId={currentUserId} userProfile={null} />
       </main>
 
       {/* Footer Info */}

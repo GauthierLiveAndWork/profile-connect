@@ -7,11 +7,16 @@ import { MatchCard } from './MatchCard';
 import { MatchingFiltersPanel, MatchingFilters } from './MatchingFilters';
 import { MatchExplanationModal } from './MatchExplanationModal';
 import { ScheduleMeetingDialog } from './ScheduleMeetingDialog';
+import { supabase } from '@/integrations/supabase/client';
+import { suggestMatches } from '@/utils/matchingAlgorithm';
 import { 
   MatchSuggestion, 
   MatchingWeights, 
   DEFAULT_WEIGHTS,
-  FeedbackEvent 
+  FeedbackEvent,
+  UserProfile,
+  PlageHoraire,
+  FormatRencontre
 } from '@/types/matching';
 import { 
   RefreshCw, 
@@ -26,12 +31,15 @@ import { useToast } from '@/hooks/use-toast';
 
 interface MatchingDashboardProps {
   userId: string;
+  userProfile?: UserProfile | null; // Profil de l'utilisateur actuel
 }
 
-export const MatchingDashboard = ({ userId }: MatchingDashboardProps) => {
+export const MatchingDashboard = ({ userId, userProfile }: MatchingDashboardProps) => {
   const [suggestions, setSuggestions] = useState<MatchSuggestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile | null>(userProfile || null);
+  const [allProfiles, setAllProfiles] = useState<UserProfile[]>([]);
   const [weights, setWeights] = useState<MatchingWeights>(DEFAULT_WEIGHTS);
   const [filters, setFilters] = useState<MatchingFilters>({
     secteurs: [],
@@ -55,81 +63,140 @@ export const MatchingDashboard = ({ userId }: MatchingDashboardProps) => {
 
   const { toast } = useToast();
 
-  // Simulation de données pour la démo
-  const mockSuggestions: MatchSuggestion[] = [
-    {
-      id: '1',
-      compatibility_score: 87,
-      reasons: [
-        '3 valeurs en commun : Impact social, Transparence, Apprentissage',
-        'Complémentarité : vous cherchez Backend Go et propose UX Research',
-        'Disponible mardi matin, à 6 km'
-      ],
-      overlaps: {
-        valeurs: ['Impact social', 'Transparence', 'Apprentissage continu'],
-        competences_supply: ['Backend Go'],
-        competences_demand: ['UX Research']
-      },
-      next_best_action: 'Proposer un créneau mardi matin',
-      profile_preview: {
+  // Charger les profils depuis la base de données
+  const loadProfiles = async () => {
+    try {
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select(`
+          id, user_id, first_name, last_name, email, sector, job_role, 
+          years_experience, top_skills, training_domains, value_proposition,
+          current_search, collaboration_type, main_objectives, work_mode, 
+          work_speed, favorite_tools, offer_tags, search_tags, current_projects,
+          sector_badges, community_badges, core_values, vision, linkedin_profile,
+          location, bio, favorite_quote, punchline, photo_url,
+          openness, conscientiousness, extraversion, agreeableness, emotional_stability,
+          big_five_responses, created_at, updated_at, languages, is_public
+        `)
+        .eq('is_public', true);
+
+      if (error) throw error;
+
+      // Transformer les données en format UserProfile
+      const transformedProfiles: UserProfile[] = (profiles || []).map(profile => ({
+        user_id: profile.id,
         identite: {
-          prenom: 'Marie',
-          nom: 'Dubois',
-          headline: 'Product Designer • HealthTech passionnée',
-          photo_url: '',
-          langues: ['fr', 'en']
+          prenom: profile.first_name || '',
+          nom: profile.last_name || '',
+          headline: `${profile.job_role} • ${profile.sector}`,
+          photo_url: profile.photo_url || '',
+          langues: Array.isArray(profile.languages) 
+            ? profile.languages.map((lang: any) => lang.language).filter(Boolean)
+            : ['fr']
         },
-        secteur: ['HealthTech'],
+        localisation: {
+          ville: profile.location || '',
+          pays: 'France',
+          lat: 48.8566,
+          lng: 2.3522,
+          mobilite: { rayon_km: 30, remote: true }
+        },
+        disponibilite: {
+          plages_horaires: ['lun_matin', 'mar_matin', 'mer_matin'] as PlageHoraire[],
+          format: (profile.collaboration_type ? [profile.collaboration_type as FormatRencontre] : ['coffee']) as FormatRencontre[]
+        },
+        secteur: (profile.sector ? [profile.sector as any] : []) as any[],
+        competences: {
+          hard: profile.top_skills ? profile.top_skills.split(',').map(s => s.trim()) : [],
+          soft: ['Communication', 'Adaptabilité'],
+          seniorite: (profile.years_experience as any) || 'intermediate'
+        },
         badges: {
-          communautaires: ['Organisatrice d\'événements', 'Mentor startups'],
-          sectoriels: ['HealthTech certified']
+          communautaires: profile.community_badges || [],
+          sectoriels: profile.sector_badges || [],
+          personnalite: []
+        },
+        valeurs: (profile.core_values || []) as any[],
+        mission_personnelle: profile.vision || '',
+        projets_en_cours: profile.current_projects ? [profile.current_projects] : [],
+        apporte: profile.offer_tags || [],
+        recherche: profile.search_tags || [],
+        big_five: {
+          ouverture: profile.openness || 50,
+          consciencieuse: profile.conscientiousness || 50,
+          extraversion: profile.extraversion || 50,
+          agreabilite: profile.agreeableness || 50,
+          stabilite_emotionnelle: profile.emotional_stability || 50,
+          source: 'auto_eval',
+          date: profile.updated_at || profile.created_at
+        },
+        preferences_matching: {
+          priorites: ['secteur', 'localisation', 'valeurs', 'complementarite_competences'],
+          poids_personnalises: weights,
+          radius_km: 30,
+          visibilite_personnalite: 'public'
+        },
+        activite: {
+          derniere_connexion: profile.updated_at || profile.created_at,
+          signals: { vues: 0, likes: 0, reponses: 0, no_show: 0, messages_envoyes: 0 }
+        },
+        etat: { ouvert_aux_matches: true, bloque_ids: [] },
+        version: 1
+      }));
+
+      setAllProfiles(transformedProfiles);
+
+      // Si on n'a pas encore le profil utilisateur, essayer de le trouver
+      if (!currentUserProfile && userId) {
+        const userProfile = transformedProfiles.find(p => p.user_id === userId);
+        if (userProfile) {
+          setCurrentUserProfile(userProfile);
         }
       }
-    },
-    {
-      id: '2',
-      compatibility_score: 73,
-      reasons: [
-        '2 secteurs en commun : SaaS, FinTech',
-        'Complémentarité technique forte',
-        'Format mentorat compatible'
-      ],
-      overlaps: {
-        valeurs: ['Innovation', 'Excellence'],
-        competences_supply: ['React', 'TypeScript'],
-        competences_demand: ['Growth Hacking']
-      },
-      next_best_action: 'Envoyer un message d\'introduction',
-      profile_preview: {
-        identite: {
-          prenom: 'Thomas',
-          nom: 'Martin',
-          headline: 'CTO & Entrepreneur • SaaS B2B',
-          photo_url: '',
-          langues: ['fr', 'en']
-        },
-        secteur: ['SaaS', 'FinTech'],
-        badges: {
-          communautaires: ['Mentor technique'],
-          sectoriels: ['Y Combinator Alumni']
-        }
-      }
+
+      return transformedProfiles;
+    } catch (error) {
+      console.error('Erreur lors du chargement des profils:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de charger les profils depuis la base de données',
+        variant: 'destructive'
+      });
+      return [];
     }
-  ];
+  };
 
   const loadSuggestions = async () => {
     setLoading(true);
     try {
-      // Simulation API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSuggestions(mockSuggestions);
-      setStats({
-        totalMatches: mockSuggestions.length,
-        avgScore: Math.round(mockSuggestions.reduce((sum, s) => sum + s.compatibility_score, 0) / mockSuggestions.length),
-        newMatches: mockSuggestions.filter(s => s.compatibility_score > 70).length,
-        pendingMeetings: 2
-      });
+      // Charger tous les profils s'ils ne sont pas déjà chargés
+      let profiles = allProfiles;
+      if (profiles.length === 0) {
+        profiles = await loadProfiles();
+      }
+
+      // Si nous avons un profil utilisateur (soit passé en prop, soit trouvé dans la DB)
+      if (currentUserProfile && profiles.length > 0) {
+        // Utiliser l'algorithme de matching réel
+        const matchSuggestions = suggestMatches(currentUserProfile, profiles, weights);
+        setSuggestions(matchSuggestions);
+        
+        setStats({
+          totalMatches: matchSuggestions.length,
+          avgScore: matchSuggestions.length > 0 
+            ? Math.round(matchSuggestions.reduce((sum, s) => sum + s.compatibility_score, 0) / matchSuggestions.length)
+            : 0,
+          newMatches: matchSuggestions.filter(s => s.compatibility_score > 70).length,
+          pendingMeetings: 2
+        });
+      } else {
+        // Fallback vers des données de démo si pas de profil utilisateur
+        console.log('Pas de profil utilisateur trouvé, utilisation de données de démo');
+        setSuggestions([]);
+        setStats({ totalMatches: 0, avgScore: 0, newMatches: 0, pendingMeetings: 0 });
+      }
     } catch (error) {
+      console.error('Erreur lors du chargement des suggestions:', error);
       toast({
         title: 'Erreur',
         description: 'Impossible de charger les suggestions',
@@ -152,7 +219,7 @@ export const MatchingDashboard = ({ userId }: MatchingDashboardProps) => {
 
   useEffect(() => {
     loadSuggestions();
-  }, [userId, weights, filters]);
+  }, [userId, weights, filters, currentUserProfile]);
 
   const handleFeedback = async (targetId: string, event: FeedbackEvent['event']) => {
     try {

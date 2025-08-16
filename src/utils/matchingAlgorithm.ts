@@ -368,3 +368,51 @@ export const injectExploration = (
   
   return [...exploitation, ...exploration];
 };
+
+/**
+ * Fonction principale de matching
+ */
+export const suggestMatches = (
+  user: UserProfile, 
+  pool: UserProfile[], 
+  weights: MatchingWeights = DEFAULT_WEIGHTS
+): MatchSuggestion[] => {
+  // 1. Filtrage dur
+  const candidates = filterCandidates(user, pool);
+  
+  // 2. Scoring de compatibilité
+  const scoredCandidates: MatchSuggestion[] = candidates.map(candidate => {
+    const { score, components } = calculateCompatibilityScore(user, candidate, weights);
+    const reasons = buildReasons(user, candidate, components);
+    
+    return {
+      id: candidate.user_id,
+      compatibility_score: Math.round(score),
+      reasons,
+      overlaps: {
+        valeurs: user.valeurs.filter(v => candidate.valeurs.includes(v)),
+        competences_supply: user.apporte.filter(s => candidate.recherche.includes(s)),
+        competences_demand: candidate.apporte.filter(s => user.recherche.includes(s))
+      },
+      next_best_action: score > 80 ? 'Proposer un créneau' : 
+                       score > 60 ? 'Envoyer un message' : 'Montrer votre intérêt',
+      profile_preview: {
+        identite: candidate.identite,
+        secteur: candidate.secteur,
+        badges: candidate.badges
+      }
+    };
+  });
+  
+  // 3. Tri par score
+  const sorted = scoredCandidates.sort((a, b) => b.compatibility_score - a.compatibility_score);
+  
+  // 4. Re-ranking MMR pour la diversité
+  const reranked = rerankWithMMR(sorted, 0.7);
+  
+  // 5. Injection d'exploration
+  const final = injectExploration(reranked, 0.2);
+  
+  // 6. Retourner le top N
+  return final.slice(0, 12);
+};
