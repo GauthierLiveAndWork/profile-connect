@@ -60,12 +60,24 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
         let data, error;
         
         if (isPublic) {
-          // For public access, use the secure public_profiles view with anonymized data
+          // For public access, use the profiles table with RLS policy for public profiles
           const result = await supabase
-            .from('public_profiles')
+            .from('profiles')
             .select('*')
             .eq('id', profileId)
+            .eq('is_public', true)
             .maybeSingle();
+          
+          // Add computed fields for public profiles
+          if (result.data) {
+            (result.data as any).display_initials = 
+              (result.data.first_name?.charAt(0) || '') + 
+              (result.data.last_name?.charAt(0) || '');
+            
+            (result.data as any).region = result.data.location?.includes(',') 
+              ? result.data.location.split(',').pop()?.trim() || 'Non spécifié'
+              : result.data.location || 'Non spécifié';
+          }
           data = result.data;
           error = result.error;
         } else {

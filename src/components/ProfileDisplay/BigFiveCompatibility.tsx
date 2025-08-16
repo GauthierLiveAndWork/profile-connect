@@ -36,11 +36,12 @@ export const BigFiveCompatibility = ({ userScores, userId }: BigFiveCompatibilit
       setLoading(true);
       
       // Récupérer les profils publics avec leurs scores Big Five (données anonymisées)
-      const { data: profiles, error } = await supabase
-        .from('public_profiles')
+      const { data, error } = await supabase
+        .from('profiles')
         .select(`
           id,
-          display_initials,
+          first_name,
+          last_name,
           photo_url,
           sector,
           openness,
@@ -49,6 +50,7 @@ export const BigFiveCompatibility = ({ userScores, userId }: BigFiveCompatibilit
           agreeableness,
           emotional_stability
         `)
+        .eq('is_public', true)
         .neq('id', userId || 'null') // Exclure l'utilisateur actuel si connecté
         .limit(6);
 
@@ -57,7 +59,14 @@ export const BigFiveCompatibility = ({ userScores, userId }: BigFiveCompatibilit
         return;
       }
 
-      if (!profiles) return;
+      if (!data) return;
+
+      // Add computed fields for each profile
+      const profiles = data.map(profile => ({
+        ...profile,
+        display_initials: (profile.first_name?.charAt(0) || '') + (profile.last_name?.charAt(0) || ''),
+      }));
+
 
       // Calculer la compatibilité pour chaque profil
       const membersWithCompatibility = profiles
