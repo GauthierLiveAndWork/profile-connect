@@ -18,11 +18,13 @@ interface ProfileDisplayProps {
 
 interface DatabaseProfile {
   id: string;
-  first_name: string;
-  last_name: string;
+  first_name?: string; // Only for authenticated users
+  last_name?: string; // Only for authenticated users
+  display_initials?: string; // For public profiles
   email?: string; // Made optional for public profiles
   photo_url?: string;
-  location?: string;
+  location?: string; // Only for authenticated users
+  region?: string; // For public profiles
   sector: string;
   job_role: string;
   years_experience: string;
@@ -58,7 +60,7 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
         let data, error;
         
         if (isPublic) {
-          // For public access, use the secure public_profiles view that excludes sensitive data
+          // For public access, use the secure public_profiles view with anonymized data
           const result = await supabase
             .from('public_profiles')
             .select('*')
@@ -126,9 +128,10 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center gap-6">
             <Avatar className="w-32 h-32">
-              <AvatarImage src={profile.photo_url} alt={`${profile.first_name} ${profile.last_name}`} />
+              <AvatarImage src={profile.photo_url} alt={isPublic ? `Profil ${profile.display_initials}` : `${profile.first_name} ${profile.last_name}`} />
               <AvatarFallback className="text-4xl bg-white text-primary">
-                {profile.first_name?.[0]}{profile.last_name?.[0]}
+                {isPublic && profile.display_initials ? profile.display_initials : 
+                 `${profile.first_name?.[0]}${profile.last_name?.[0]}`}
               </AvatarFallback>
             </Avatar>
             
@@ -136,7 +139,10 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h1 className="text-4xl font-bold mb-2">
-                    {profile.first_name} {profile.last_name}
+                    {isPublic ? 
+                      (profile.display_initials || 'Profil Anonyme') : 
+                      `${profile.first_name} ${profile.last_name}`
+                    }
                   </h1>
                   <p className="text-xl opacity-90 mb-4">{profile.job_role}</p>
                 </div>
@@ -151,10 +157,10 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
               </div>
               
               <div className="flex flex-wrap gap-4 justify-center md:justify-start text-sm">
-                {profile.location && (
+                {(profile.location || profile.region) && (
                   <div className="flex items-center gap-1">
                     <MapPin className="w-4 h-4" />
-                    {profile.location}
+                    {isPublic ? profile.region : profile.location}
                   </div>
                 )}
                 {!isPublic && profile.email && (

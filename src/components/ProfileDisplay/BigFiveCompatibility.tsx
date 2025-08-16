@@ -11,8 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface CompatibilityMember {
   id: string;
-  first_name: string;
-  last_name: string;
+  display_initials: string;
   photo_url?: string;
   sector: string;
   scores: BigFiveScores;
@@ -36,13 +35,12 @@ export const BigFiveCompatibility = ({ userScores, userId }: BigFiveCompatibilit
     try {
       setLoading(true);
       
-      // Récupérer les profils publics avec leurs scores Big Five
+      // Récupérer les profils publics avec leurs scores Big Five (données anonymisées)
       const { data: profiles, error } = await supabase
         .from('public_profiles')
         .select(`
           id,
-          first_name,
-          last_name,
+          display_initials,
           photo_url,
           sector,
           openness,
@@ -76,8 +74,7 @@ export const BigFiveCompatibility = ({ userScores, userId }: BigFiveCompatibilit
 
           return {
             id: profile.id,
-            first_name: profile.first_name,
-            last_name: profile.last_name,
+            display_initials: profile.display_initials,
             photo_url: profile.photo_url,
             sector: profile.sector,
             scores: memberScores,
@@ -109,8 +106,8 @@ export const BigFiveCompatibility = ({ userScores, userId }: BigFiveCompatibilit
     return 'Faible';
   };
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  const getInitials = (displayInitials: string) => {
+    return displayInitials || '??';
   };
 
   if (loading) {
@@ -172,16 +169,16 @@ export const BigFiveCompatibility = ({ userScores, userId }: BigFiveCompatibilit
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <Avatar className="w-10 h-10">
-                  <AvatarImage src={member.photo_url} alt={`${member.first_name} ${member.last_name}`} />
+                  <AvatarImage src={member.photo_url} alt={`Membre ${member.display_initials}`} />
                   <AvatarFallback>
-                    {getInitials(member.first_name, member.last_name)}
+                    {getInitials(member.display_initials)}
                   </AvatarFallback>
                 </Avatar>
                 
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-sm">
-                      {member.first_name} {member.last_name}
+                      {member.display_initials || 'Membre Anonyme'}
                     </span>
                     <Badge variant="outline" className="text-xs">
                       {member.sector}

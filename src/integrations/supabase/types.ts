@@ -295,22 +295,21 @@ export type Database = {
           created_at: string | null
           current_projects: string | null
           current_search: string | null
+          display_initials: string | null
           emotional_stability: number | null
           extraversion: number | null
           favorite_quote: string | null
           favorite_tools: string[] | null
-          first_name: string | null
           id: string | null
           is_public: boolean | null
           job_role: string | null
           languages: Json | null
-          last_name: string | null
-          location: string | null
           main_objectives: string[] | null
           offer_tags: string[] | null
           openness: number | null
           photo_url: string | null
           punchline: string | null
+          region: string | null
           search_tags: string[] | null
           sector: string | null
           sector_badges: string[] | null
@@ -336,22 +335,21 @@ export type Database = {
           created_at?: string | null
           current_projects?: string | null
           current_search?: string | null
+          display_initials?: never
           emotional_stability?: number | null
           extraversion?: number | null
           favorite_quote?: string | null
           favorite_tools?: string[] | null
-          first_name?: string | null
           id?: string | null
           is_public?: boolean | null
           job_role?: string | null
           languages?: Json | null
-          last_name?: string | null
-          location?: string | null
           main_objectives?: string[] | null
           offer_tags?: string[] | null
           openness?: number | null
           photo_url?: string | null
           punchline?: string | null
+          region?: never
           search_tags?: string[] | null
           sector?: string | null
           sector_badges?: string[] | null
@@ -377,22 +375,21 @@ export type Database = {
           created_at?: string | null
           current_projects?: string | null
           current_search?: string | null
+          display_initials?: never
           emotional_stability?: number | null
           extraversion?: number | null
           favorite_quote?: string | null
           favorite_tools?: string[] | null
-          first_name?: string | null
           id?: string | null
           is_public?: boolean | null
           job_role?: string | null
           languages?: Json | null
-          last_name?: string | null
-          location?: string | null
           main_objectives?: string[] | null
           offer_tags?: string[] | null
           openness?: number | null
           photo_url?: string | null
           punchline?: string | null
+          region?: never
           search_tags?: string[] | null
           sector?: string | null
           sector_badges?: string[] | null
@@ -428,9 +425,31 @@ export type Database = {
           view_name: string
         }[]
       }
+      get_public_profile_with_names: {
+        Args: { profile_id: string }
+        Returns: {
+          bio: string
+          display_initials: string
+          first_name: string
+          id: string
+          job_role: string
+          last_name: string
+          photo_url: string
+          sector: string
+        }[]
+      }
       is_admin_user: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      verify_public_data_safety: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          data_type: string
+          is_exposed: boolean
+          recommendation: string
+          risk_level: string
+        }[]
       }
       verify_view_security: {
         Args: Record<PropertyKey, never>
