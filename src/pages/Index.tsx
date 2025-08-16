@@ -1,25 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ProfileForm } from '@/components/ProfileForm/ProfileForm';
 import { ProfileDisplay } from '@/components/ProfileDisplay/ProfileDisplay';
-import { Users, Target, BarChart3, Settings, ArrowLeft } from 'lucide-react';
+import { Users, Target, BarChart3, Settings, ArrowLeft, Edit } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const [showForm, setShowForm] = useState(false);
   const [profileId, setProfileId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-  if (profileId) {
+  // Charger le profil de l'utilisateur connecté
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Chercher le profil de l'utilisateur connecté
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Erreur lors du chargement du profil:', error);
+        } else if (profile) {
+          setProfileId(profile.id);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement du profil:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUserProfile();
+  }, [user]);
+
+  // Afficher un loader pendant le chargement
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (profileId && !showForm) {
     return (
       <div>
         <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b">
-          <div className="container mx-auto px-6 py-4">
+          <div className="container mx-auto px-6 py-4 flex justify-between items-center">
             <Link to="/">
               <Button variant="ghost" size="sm" className="gap-2">
                 <ArrowLeft className="w-4 h-4" />
                 Retour à l'accueil
               </Button>
             </Link>
+            <Button
+              onClick={() => setShowForm(true)}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Edit className="w-4 h-4" />
+              Modifier le profil
+            </Button>
           </div>
         </div>
         <ProfileDisplay profileId={profileId} />
@@ -31,16 +84,29 @@ const Index = () => {
     return (
       <div>
         <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b">
-          <div className="container mx-auto px-6 py-4">
+          <div className="container mx-auto px-6 py-4 flex justify-between items-center">
             <Link to="/">
               <Button variant="ghost" size="sm" className="gap-2">
                 <ArrowLeft className="w-4 h-4" />
                 Retour à l'accueil
               </Button>
             </Link>
+            {profileId && (
+              <Button
+                onClick={() => setShowForm(false)}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                Annuler la modification
+              </Button>
+            )}
           </div>
         </div>
-        <ProfileForm onComplete={setProfileId} />
+        <ProfileForm onComplete={(newProfileId) => {
+          setProfileId(newProfileId);
+          setShowForm(false);
+        }} />
       </div>
     );
   }
@@ -68,14 +134,17 @@ const Index = () => {
             Live&Work – Connectez-vous aux bons partenaires
           </h1>
           <p className="text-xl mb-8 opacity-90">
-            Complétez votre profil pour trouver des synergies professionnelles adaptées à vos besoins.
+            {user 
+              ? "Créez votre profil pour commencer à recevoir des suggestions de matching personnalisées."
+              : "Complétez votre profil pour trouver des synergies professionnelles adaptées à vos besoins."
+            }
           </p>
           <Button 
             size="lg" 
             className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6"
             onClick={() => setShowForm(true)}
           >
-            Commencer le questionnaire
+            {user ? "Créer mon profil" : "Commencer le questionnaire"}
           </Button>
         </div>
       </section>
