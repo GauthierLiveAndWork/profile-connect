@@ -54,11 +54,27 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', profileId)
-          .maybeSingle();
+        let data, error;
+        
+        if (isPublic) {
+          // For public access, use the secure public_profiles view that excludes sensitive data
+          const result = await supabase
+            .from('public_profiles')
+            .select('*')
+            .eq('id', profileId)
+            .maybeSingle();
+          data = result.data;
+          error = result.error;
+        } else {
+          // For private access (authenticated users viewing their own profiles), get full data
+          const result = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', profileId)
+            .maybeSingle();
+          data = result.data;
+          error = result.error;
+        }
 
         if (error) throw error;
         setProfile(data);
@@ -70,7 +86,7 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
     };
 
     fetchProfile();
-  }, [profileId]);
+  }, [profileId, isPublic]);
 
   if (loading) {
     return (
@@ -140,7 +156,7 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
                     {profile.location}
                   </div>
                 )}
-                {profile.email && (
+                {!isPublic && profile.email && (
                   <div className="flex items-center gap-1">
                     <Mail className="w-4 h-4" />
                     {profile.email}
@@ -324,8 +340,8 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
               </CardContent>
             </Card>
 
-            {/* Liens professionnels */}
-            {profile.linkedin_profile && (
+            {/* Liens professionnels - Only for authenticated users */}
+            {!isPublic && profile.linkedin_profile && (
               <Card>
                 <CardHeader>
                   <CardTitle>Profils professionnels</CardTitle>
