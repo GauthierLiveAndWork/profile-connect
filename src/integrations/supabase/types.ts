@@ -305,13 +305,11 @@ export type Database = {
           job_role: string | null
           languages: Json | null
           last_name: string | null
-          linkedin_profile: string | null
           location: string | null
           main_objectives: string[] | null
           offer_tags: string[] | null
           openness: number | null
           photo_url: string | null
-          professional_references: string | null
           punchline: string | null
           search_tags: string[] | null
           sector: string | null
@@ -348,13 +346,11 @@ export type Database = {
           job_role?: string | null
           languages?: Json | null
           last_name?: string | null
-          linkedin_profile?: string | null
           location?: string | null
           main_objectives?: string[] | null
           offer_tags?: string[] | null
           openness?: number | null
           photo_url?: string | null
-          professional_references?: string | null
           punchline?: string | null
           search_tags?: string[] | null
           sector?: string | null
@@ -391,13 +387,11 @@ export type Database = {
           job_role?: string | null
           languages?: Json | null
           last_name?: string | null
-          linkedin_profile?: string | null
           location?: string | null
           main_objectives?: string[] | null
           offer_tags?: string[] | null
           openness?: number | null
           photo_url?: string | null
-          professional_references?: string | null
           punchline?: string | null
           search_tags?: string[] | null
           sector?: string | null
