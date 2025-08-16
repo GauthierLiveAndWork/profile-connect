@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface FormNavigationProps {
   currentStep: number;
@@ -7,6 +8,7 @@ interface FormNavigationProps {
   onPrevious: () => void;
   onNext: () => void;
   onSubmit?: () => void;
+  onPreview?: () => void;
   canGoNext: boolean;
   isLastStep: boolean;
 }
@@ -17,6 +19,7 @@ export const FormNavigation = ({
   onPrevious,
   onNext,
   onSubmit,
+  onPreview,
   canGoNext,
   isLastStep
 }: FormNavigationProps) => {
@@ -47,15 +50,28 @@ export const FormNavigation = ({
         Étape {currentStep + 1} sur {totalSteps}
       </div>
 
-      <Button
-        type="button"
-        onClick={isLastStep ? onSubmit : handleNext}
-        disabled={!canGoNext}
-        className="flex items-center gap-2"
-      >
-        {isLastStep ? 'Terminer' : 'Suivant'}
-        {!isLastStep && <ChevronRight className="w-4 h-4" />}
-      </Button>
+      <div className="flex gap-2 items-center">
+        {isLastStep && onPreview && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onPreview}
+            className="flex items-center gap-2"
+          >
+            <Eye className="w-4 h-4" />
+            Prévisualiser
+          </Button>
+        )}
+        <Button
+          type="button"
+          onClick={isLastStep ? onSubmit : handleNext}
+          disabled={!canGoNext}
+          className="flex items-center gap-2"
+        >
+          {isLastStep ? 'Terminer' : 'Suivant'}
+          {!isLastStep && <ChevronRight className="w-4 h-4" />}
+        </Button>
+      </div>
     </div>
   );
 };

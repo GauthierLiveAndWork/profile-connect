@@ -23,7 +23,7 @@ export const NetworkStep = ({ data, onUpdate }: NetworkStepProps) => {
   const watchedFields = form.watch();
   React.useEffect(() => {
     onUpdate(watchedFields);
-  }, [JSON.stringify(watchedFields), onUpdate]);
+  }, [watchedFields.linkedin_profile, watchedFields.professional_references, onUpdate]);
 
   return (
     <Form {...form}>
@@ -83,10 +83,9 @@ export const NetworkStep = ({ data, onUpdate }: NetworkStepProps) => {
 
         <div className="text-center p-6 bg-muted/30 rounded-lg">
           <h4 className="font-medium mb-2">🎉 Félicitations !</h4>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mb-4">
             Vous avez terminé votre profil Live&Work. 
-            Cliquez sur "Terminer" pour découvrir votre profil de personnalité Big Five 
-            et permettre aux autres utilisateurs de vous découvrir.
+            Vous pouvez prévisualiser votre profil avant de le finaliser.
           </p>
         </div>
       </div>

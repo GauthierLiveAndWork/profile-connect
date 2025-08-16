@@ -14,6 +14,8 @@ import { calculateBigFiveScores } from '@/utils/bigFive';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileFormData } from '@/types/profile';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ProfileDisplay } from '@/components/ProfileDisplay/ProfileDisplay';
 
 const STEPS = [
   { title: 'Profil', description: 'Vos informations personnelles et professionnelles' },
@@ -34,6 +36,8 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useLocalStorage<Partial<ProfileFormData>>('livework-form-data', {});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewProfileId, setPreviewProfileId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const updateStepData = (stepData: any) => {
@@ -58,6 +62,128 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
     }
   };
 
+  const handlePreview = async () => {
+    if (!canGoNext() || isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      // Get current user
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        toast({
+          title: "Erreur d'authentification",
+          description: "Vous devez être connecté pour prévisualiser un profil.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Check if user already has a profile
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (existingProfile) {
+        // Update existing profile for preview
+        await updateProfile(existingProfile.id, user);
+        setPreviewProfileId(existingProfile.id);
+      } else {
+        // Create temporary profile for preview
+        const profileId = await createProfile(user, true);
+        if (profileId) {
+          setPreviewProfileId(profileId);
+        }
+      }
+      
+      setPreviewOpen(true);
+    } catch (error) {
+      console.error('Error creating preview:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la prévisualisation.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const createProfile = async (user: any, isPreview: boolean = false) => {
+    const validLanguages = formData.languages?.filter(lang => lang.language && lang.level) || [];
+    const bigFiveScores = calculateBigFiveScores(formData.big_five_responses || []);
+    
+    const profileData = {
+      ...formData as ProfileFormData,
+      user_id: user.id,
+      languages: validLanguages,
+      offer_tags: formData.offer_tags || [],
+      search_tags: formData.search_tags || [],
+      sector_badges: formData.sector_badges || [],
+      community_badges: formData.community_badges || [],
+      core_values: formData.core_values || [],
+      main_objectives: formData.main_objectives || [],
+      favorite_tools: formData.favorite_tools || [],
+      is_public: !isPreview, // Preview profiles are not public
+      ...bigFiveScores
+    };
+    
+    console.log('Submitting profile data:', profileData);
+    
+    const { data, error } = await supabase
+      .from('profiles')
+      .insert(profileData)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      
+      if (error.code === '23505' && error.message.includes('profiles_email_unique_idx')) {
+        toast({
+          title: "Email déjà utilisé",
+          description: "Un profil avec cette adresse email existe déjà. Tentative de mise à jour...",
+          variant: "destructive"
+        });
+        return null;
+      }
+      
+      throw error;
+    }
+
+    return data.id;
+  };
+
+  const updateProfile = async (profileId: string, user: any) => {
+    const validLanguages = formData.languages?.filter(lang => lang.language && lang.level) || [];
+    const bigFiveScores = calculateBigFiveScores(formData.big_five_responses || []);
+    
+    const profileData = {
+      ...formData as ProfileFormData,
+      user_id: user.id,
+      languages: validLanguages,
+      offer_tags: formData.offer_tags || [],
+      search_tags: formData.search_tags || [],
+      sector_badges: formData.sector_badges || [],
+      community_badges: formData.community_badges || [],
+      core_values: formData.core_values || [],
+      main_objectives: formData.main_objectives || [],
+      favorite_tools: formData.favorite_tools || [],
+      is_public: true,
+      ...bigFiveScores
+    };
+    
+    const { error } = await supabase
+      .from('profiles')
+      .update(profileData)
+      .eq('id', profileId);
+
+    if (error) {
+      throw error;
+    }
+  };
+
   const handleSubmit = async () => {
     if (!canGoNext() || isSubmitting) return;
     
@@ -74,64 +200,42 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         return;
       }
 
-      // Validate that all languages have both language and level selected
-      const validLanguages = formData.languages?.filter(lang => lang.language && lang.level) || [];
-      
-      const bigFiveScores = calculateBigFiveScores(formData.big_five_responses || []);
-      
-      // Prepare profile data with proper defaults
-      const profileData = {
-        ...formData as ProfileFormData,
-        user_id: user.id,
-        languages: validLanguages,
-        offer_tags: formData.offer_tags || [],
-        search_tags: formData.search_tags || [],
-        sector_badges: formData.sector_badges || [],
-        community_badges: formData.community_badges || [],
-        core_values: formData.core_values || [],
-        main_objectives: formData.main_objectives || [],
-        favorite_tools: formData.favorite_tools || [],
-        ...bigFiveScores
-      };
-      
-      console.log('Submitting profile data:', profileData);
-      
-      const { data, error } = await supabase
+      // Check if user already has a profile
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .insert(profileData)
-        .select()
-        .single();
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-      if (error) {
-        console.error('Supabase error:', error);
-        
-        // Handle duplicate email error specifically
-        if (error.code === '23505' && error.message.includes('profiles_email_unique_idx')) {
-          toast({
-            title: "Email déjà utilisé",
-            description: "Un profil avec cette adresse email existe déjà. Veuillez utiliser une autre adresse email.",
-            variant: "destructive"
-          });
-          return;
-        }
-        
-        throw error;
+      let profileId: string;
+
+      if (existingProfile) {
+        // Update existing profile
+        await updateProfile(existingProfile.id, user);
+        profileId = existingProfile.id;
+        toast({
+          title: "Profil mis à jour avec succès !",
+          description: "Découvrez maintenant votre profil Big Five mis à jour."
+        });
+      } else {
+        // Create new profile
+        const newProfileId = await createProfile(user);
+        if (!newProfileId) return;
+        profileId = newProfileId;
+        toast({
+          title: "Profil créé avec succès !",
+          description: "Découvrez maintenant votre profil Big Five."
+        });
       }
 
       // Clear form data from localStorage
       localStorage.removeItem('livework-form-data');
-      
-      toast({
-        title: "Profil créé avec succès !",
-        description: "Découvrez maintenant votre profil Big Five."
-      });
-
-      onComplete(data.id);
+      onComplete(profileId);
     } catch (error) {
-      console.error('Error creating profile:', error);
+      console.error('Error creating/updating profile:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de la création de votre profil. Vérifiez que tous les champs obligatoires sont remplis.",
+        description: "Une erreur est survenue lors de la sauvegarde de votre profil. Vérifiez que tous les champs obligatoires sont remplis.",
         variant: "destructive"
       });
     } finally {
@@ -181,9 +285,22 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         onPrevious={() => setCurrentStep(prev => Math.max(0, prev - 1))}
         onNext={() => setCurrentStep(prev => prev + 1)}
         onSubmit={handleSubmit}
+        onPreview={handlePreview}
         canGoNext={canGoNext() && !isSubmitting}
         isLastStep={currentStep === STEPS.length - 1}
       />
+
+      {/* Preview Dialog */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Prévisualisation de votre profil</DialogTitle>
+          </DialogHeader>
+          {previewProfileId && (
+            <ProfileDisplay profileId={previewProfileId} isPublic={false} />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

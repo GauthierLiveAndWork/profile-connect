@@ -125,11 +125,6 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
                 </div>
                 {!isPublic && (
                   <div className="flex gap-2">
-                    <EmailProfileButton 
-                      profileId={profileId} 
-                      profileName={`${profile.first_name} ${profile.last_name}`}
-                      defaultEmail={profile.email || ''}
-                    />
                     <ShareProfile 
                       profileId={profileId} 
                       profileName={`${profile.first_name} ${profile.last_name}`} 
