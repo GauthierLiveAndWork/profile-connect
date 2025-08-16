@@ -55,6 +55,8 @@ export const Admin = () => {
 
   const fetchProfiles = async () => {
     try {
+      // Admin users can access emails through the profiles table due to admin RLS policy
+      // This is secure because only verified admins can access this data
       const { data, error } = await supabase
         .from('profiles')
         .select('id, first_name, last_name, email, sector, job_role, created_at')

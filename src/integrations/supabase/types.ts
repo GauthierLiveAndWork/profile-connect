@@ -411,6 +411,15 @@ export type Database = {
       }
     }
     Functions: {
+      check_email_exposure: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          has_email_column: boolean
+          is_publicly_accessible: boolean
+          security_risk: string
+          table_or_view_name: string
+        }[]
+      }
       check_security_definer_views: {
         Args: Record<PropertyKey, never>
         Returns: {
