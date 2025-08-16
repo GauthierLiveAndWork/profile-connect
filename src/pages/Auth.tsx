@@ -40,11 +40,53 @@ export const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Enhanced input validation
+    if (!email || !password) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email) || email.length > 254) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez entrer une adresse email valide",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Password strength validation
+    if (password.length < 8) {
+      toast({
+        title: "Erreur",
+        description: "Le mot de passe doit contenir au moins 8 caractères",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check for at least one number and one letter
+    if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
+      toast({
+        title: "Erreur",
+        description: "Le mot de passe doit contenir au moins une lettre et un chiffre",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       const { error } = await supabase.auth.signUp({
-        email,
+        email: email.trim().toLowerCase(), // Sanitize email
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/`
@@ -70,11 +112,33 @@ export const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Enhanced input validation
+    if (!email || !password) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email) || email.length > 254) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez entrer une adresse email valide",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim().toLowerCase(), // Sanitize email
         password
       });
 
@@ -85,9 +149,17 @@ export const Auth = () => {
         description: "Vous êtes maintenant connecté."
       });
     } catch (error: any) {
+      let errorMessage = error.message;
+      // Provide user-friendly error messages
+      if (error.message.includes('Invalid login credentials')) {
+        errorMessage = "Email ou mot de passe incorrect";
+      } else if (error.message.includes('Email not confirmed')) {
+        errorMessage = "Veuillez confirmer votre email avant de vous connecter";
+      }
+      
       toast({
         title: "Erreur de connexion",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -160,11 +232,11 @@ export const Auth = () => {
                 <div className="space-y-2">
                   <Input
                     type="password"
-                    placeholder="Mot de passe (minimum 6 caractères)"
+                    placeholder="Mot de passe (minimum 8 caractères)"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    minLength={6}
+                    minLength={8}
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
