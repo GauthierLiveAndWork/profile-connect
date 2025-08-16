@@ -15,8 +15,8 @@ import {
 } from 'lucide-react';
 
 const MatchingTest = () => {
-  // Pour la démo, on peut utiliser le premier profil disponible ou un profil de test
-  const currentUserId = 'demo_user'; // ID générique pour la démo
+  // Utiliser l'ID de l'utilisateur authentifié s'il existe
+  const currentUserId = '555b4379-64e9-4e94-bfb1-bc40e0cc6cfd'; // Votre profil ID d'après les requêtes réseau
 
   return (
     <div className="min-h-screen bg-background">
@@ -85,17 +85,17 @@ const MatchingTest = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                      MD
+                      GW
                     </div>
                     <div>
-                      <p className="font-medium">Marie Dubois</p>
-                      <p className="text-sm text-muted-foreground">Product Designer • HealthTech</p>
+                      <p className="font-medium">Gauthier WAGNEUR</p>
+                      <p className="text-sm text-muted-foreground">CEO • Autre</p>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-1 mt-2">
-                    <Badge variant="secondary" className="text-xs">Paris</Badge>
-                    <Badge variant="secondary" className="text-xs">Senior</Badge>
-                    <Badge variant="secondary" className="text-xs">Télétravail OK</Badge>
+                    <Badge variant="secondary" className="text-xs">Charleroi</Badge>
+                    <Badge variant="secondary" className="text-xs">0-1 ans</Badge>
+                    <Badge variant="secondary" className="text-xs">Mixte</Badge>
                   </div>
                 </div>
               </CardContent>
