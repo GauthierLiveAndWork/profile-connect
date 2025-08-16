@@ -289,39 +289,26 @@ export type Database = {
           big_five_responses: number[] | null
           bio: string | null
           collaboration_type: string | null
-          community_badges: string[] | null
           conscientiousness: number | null
-          core_values: string[] | null
           created_at: string | null
-          current_projects: string | null
-          current_search: string | null
           display_initials: string | null
           emotional_stability: number | null
           extraversion: number | null
-          favorite_quote: string | null
           favorite_tools: string[] | null
           id: string | null
-          is_public: boolean | null
           job_role: string | null
-          languages: Json | null
           main_objectives: string[] | null
-          offer_tags: string[] | null
           openness: number | null
           photo_url: string | null
           punchline: string | null
           region: string | null
-          search_tags: string[] | null
           sector: string | null
-          sector_badges: string[] | null
           top_skills: string | null
           training_domains: string | null
           updated_at: string | null
           value_proposition: string | null
-          vision: string | null
           work_mode: string | null
-          work_rhythm_details: string | null
           work_speed: string | null
-          work_style_details: string | null
           years_experience: string | null
         }
         Insert: {
@@ -329,39 +316,26 @@ export type Database = {
           big_five_responses?: number[] | null
           bio?: string | null
           collaboration_type?: string | null
-          community_badges?: string[] | null
           conscientiousness?: number | null
-          core_values?: string[] | null
           created_at?: string | null
-          current_projects?: string | null
-          current_search?: string | null
           display_initials?: never
           emotional_stability?: number | null
           extraversion?: number | null
-          favorite_quote?: string | null
           favorite_tools?: string[] | null
           id?: string | null
-          is_public?: boolean | null
           job_role?: string | null
-          languages?: Json | null
           main_objectives?: string[] | null
-          offer_tags?: string[] | null
           openness?: number | null
           photo_url?: string | null
           punchline?: string | null
           region?: never
-          search_tags?: string[] | null
           sector?: string | null
-          sector_badges?: string[] | null
           top_skills?: string | null
           training_domains?: string | null
           updated_at?: string | null
           value_proposition?: string | null
-          vision?: string | null
           work_mode?: string | null
-          work_rhythm_details?: string | null
           work_speed?: string | null
-          work_style_details?: string | null
           years_experience?: string | null
         }
         Update: {
@@ -369,39 +343,26 @@ export type Database = {
           big_five_responses?: number[] | null
           bio?: string | null
           collaboration_type?: string | null
-          community_badges?: string[] | null
           conscientiousness?: number | null
-          core_values?: string[] | null
           created_at?: string | null
-          current_projects?: string | null
-          current_search?: string | null
           display_initials?: never
           emotional_stability?: number | null
           extraversion?: number | null
-          favorite_quote?: string | null
           favorite_tools?: string[] | null
           id?: string | null
-          is_public?: boolean | null
           job_role?: string | null
-          languages?: Json | null
           main_objectives?: string[] | null
-          offer_tags?: string[] | null
           openness?: number | null
           photo_url?: string | null
           punchline?: string | null
           region?: never
-          search_tags?: string[] | null
           sector?: string | null
-          sector_badges?: string[] | null
           top_skills?: string | null
           training_domains?: string | null
           updated_at?: string | null
           value_proposition?: string | null
-          vision?: string | null
           work_mode?: string | null
-          work_rhythm_details?: string | null
           work_speed?: string | null
-          work_style_details?: string | null
           years_experience?: string | null
         }
         Relationships: []
