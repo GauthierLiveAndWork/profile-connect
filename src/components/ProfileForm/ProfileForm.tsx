@@ -162,18 +162,84 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
     const validLanguages = formData.languages?.filter(lang => lang.language && lang.level) || [];
     const bigFiveScores = calculateBigFiveScores(formData.big_five_responses || []);
     
+    // Validation des champs requis
+    const requiredFields = [
+      'first_name', 'last_name', 'sector', 'job_role', 'years_experience',
+      'top_skills', 'training_domains', 'value_proposition', 'current_search',
+      'collaboration_type', 'work_mode', 'work_speed'
+    ];
+    
+    const missingFields = requiredFields.filter(field => !formData[field as keyof ProfileFormData]);
+    
+    if (missingFields.length > 0) {
+      console.error('Missing required fields:', missingFields);
+      throw new Error(`Champs requis manquants: ${missingFields.join(', ')}`);
+    }
+
+    // Validation des arrays requis
+    if (!formData.main_objectives || formData.main_objectives.length === 0) {
+      throw new Error('Au moins un objectif principal est requis');
+    }
+    
+    if (!formData.favorite_tools || formData.favorite_tools.length === 0) {
+      throw new Error('Au moins un outil favori est requis');
+    }
+
+    if (!formData.big_five_responses || formData.big_five_responses.length !== 10) {
+      throw new Error('Le questionnaire Big Five doit être complété (10 réponses)');
+    }
+    
     const profileData = {
-      ...formData as ProfileFormData,
-      user_id: user.id,
-      languages: validLanguages,
+      // Champs de base
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email || user.email,
+      photo_url: formData.photo_url || null,
+      location: formData.location || null,
+      sector: formData.sector,
+      job_role: formData.job_role,
+      years_experience: formData.years_experience,
+      bio: formData.bio || null,
+      favorite_quote: formData.favorite_quote || null,
+      punchline: formData.punchline || null,
+      
+      // Compétences et offre
+      top_skills: formData.top_skills,
+      training_domains: formData.training_domains,
+      value_proposition: formData.value_proposition,
       offer_tags: formData.offer_tags || [],
+      
+      // Besoins et objectifs
+      current_search: formData.current_search,
+      collaboration_type: formData.collaboration_type,
+      main_objectives: formData.main_objectives || [],
       search_tags: formData.search_tags || [],
+      current_projects: formData.current_projects || null,
+      
+      // Préférences
+      work_mode: formData.work_mode,
+      work_speed: formData.work_speed,
+      favorite_tools: formData.favorite_tools || [],
+      
+      // Réseau
+      linkedin_profile: formData.linkedin_profile || null,
+      professional_references: formData.professional_references || null,
+      
+      // Identité et valeurs
       sector_badges: formData.sector_badges || [],
       community_badges: formData.community_badges || [],
       core_values: formData.core_values || [],
-      main_objectives: formData.main_objectives || [],
-      favorite_tools: formData.favorite_tools || [],
-      is_public: !isPreview, // Preview profiles are not public
+      vision: formData.vision || null,
+      work_style_details: formData.work_style_details || null,
+      work_rhythm_details: formData.work_rhythm_details || null,
+      
+      // Métadonnées
+      user_id: user.id,
+      languages: validLanguages,
+      is_public: !isPreview,
+      big_five_responses: formData.big_five_responses || [],
+      
+      // Scores Big Five
       ...bigFiveScores
     };
     
