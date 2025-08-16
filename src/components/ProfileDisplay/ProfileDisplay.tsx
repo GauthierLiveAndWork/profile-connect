@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, Mail, Briefcase, Globe, Users, Target, Brain } from 'lucide-react';
 import { BigFiveRadarChart } from './BigFiveRadarChart';
+import { OptimizedBigFiveDisplay } from './OptimizedBigFiveDisplay';
 import { ShareProfile } from './ShareProfile';
 import { EmailProfileButton } from './EmailProfileButton';
 import { ProfileFormData } from '@/types/profile';
@@ -196,30 +197,16 @@ export const ProfileDisplay = ({ profileId, isPublic = false }: ProfileDisplayPr
               </Card>
             )}
 
-            {/* Test Big Five - Visualisation Radar */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="w-5 h-5" />
-                  Profil de personnalité Big Five
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <BigFiveRadarChart data={bigFiveScores} />
-                <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {bigFiveScores.map((item) => (
-                    <div key={item.dimension} className="text-center">
-                      <div 
-                        className="w-4 h-4 rounded-full mx-auto mb-1"
-                        style={{ backgroundColor: item.color }}
-                      />
-                      <p className="text-sm font-medium">{item.dimension}</p>
-                      <p className="text-xs text-muted-foreground">{(item.score * 20).toFixed(0)}%</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Module Big Five Optimisé */}
+            <OptimizedBigFiveDisplay 
+              scores={{
+                openness: profile.openness,
+                conscientiousness: profile.conscientiousness,
+                extraversion: profile.extraversion,
+                agreeableness: profile.agreeableness,
+                emotional_stability: profile.emotional_stability
+              }}
+            />
 
             {/* Compétences et proposition de valeur */}
             <Card>
