@@ -75,10 +75,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matches_profile1_id_fkey"
+            columns: ["profile1_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "matches_profile2_id_fkey"
             columns: ["profile2_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_profile2_id_fkey"
+            columns: ["profile2_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -118,6 +132,13 @@ export type Database = {
             columns: ["sender_profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_profile_id_fkey"
+            columns: ["sender_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -262,7 +283,96 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          agreeableness: number | null
+          bio: string | null
+          collaboration_type: string | null
+          conscientiousness: number | null
+          created_at: string | null
+          current_search: string | null
+          display_initials: string | null
+          emotional_stability: number | null
+          extraversion: number | null
+          favorite_tools: string[] | null
+          first_name: string | null
+          id: string | null
+          job_role: string | null
+          languages: Json | null
+          last_name: string | null
+          location: string | null
+          main_objectives: string[] | null
+          openness: number | null
+          photo_url: string | null
+          punchline: string | null
+          sector: string | null
+          top_skills: string | null
+          training_domains: string | null
+          value_proposition: string | null
+          work_mode: string | null
+          work_speed: string | null
+          years_experience: string | null
+        }
+        Insert: {
+          agreeableness?: number | null
+          bio?: string | null
+          collaboration_type?: string | null
+          conscientiousness?: number | null
+          created_at?: string | null
+          current_search?: string | null
+          display_initials?: never
+          emotional_stability?: number | null
+          extraversion?: number | null
+          favorite_tools?: string[] | null
+          first_name?: string | null
+          id?: string | null
+          job_role?: string | null
+          languages?: Json | null
+          last_name?: string | null
+          location?: string | null
+          main_objectives?: string[] | null
+          openness?: number | null
+          photo_url?: string | null
+          punchline?: string | null
+          sector?: string | null
+          top_skills?: string | null
+          training_domains?: string | null
+          value_proposition?: string | null
+          work_mode?: string | null
+          work_speed?: string | null
+          years_experience?: string | null
+        }
+        Update: {
+          agreeableness?: number | null
+          bio?: string | null
+          collaboration_type?: string | null
+          conscientiousness?: number | null
+          created_at?: string | null
+          current_search?: string | null
+          display_initials?: never
+          emotional_stability?: number | null
+          extraversion?: number | null
+          favorite_tools?: string[] | null
+          first_name?: string | null
+          id?: string | null
+          job_role?: string | null
+          languages?: Json | null
+          last_name?: string | null
+          location?: string | null
+          main_objectives?: string[] | null
+          openness?: number | null
+          photo_url?: string | null
+          punchline?: string | null
+          sector?: string | null
+          top_skills?: string | null
+          training_domains?: string | null
+          value_proposition?: string | null
+          work_mode?: string | null
+          work_speed?: string | null
+          years_experience?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_public_profile_with_names: {
