@@ -120,28 +120,20 @@ const Index = () => {
             <Link to="/matching-test">
               <Button 
                 size="sm" 
-                className="gap-2 font-medium border-0"
-                style={{ 
-                  backgroundColor: 'white', 
-                  color: '#1f2937',
-                  padding: '8px 16px'
-                }}
+                variant="secondary"
+                className="gap-2 font-medium bg-white text-slate-900 hover:bg-white/90"
               >
-                <Users className="w-4 h-4" style={{ color: '#1f2937' }} />
+                <Users className="w-4 h-4" />
                 Test Matching
               </Button>
             </Link>
             <Link to="/admin">
               <Button 
                 size="sm" 
-                className="gap-2 font-medium border-0"
-                style={{ 
-                  backgroundColor: 'white', 
-                  color: '#1f2937',
-                  padding: '8px 16px'
-                }}
+                variant="secondary"
+                className="gap-2 font-medium bg-white text-slate-900 hover:bg-white/90"
               >
-                <Settings className="w-4 h-4" style={{ color: '#1f2937' }} />
+                <Settings className="w-4 h-4" />
                 Admin
               </Button>
             </Link>
