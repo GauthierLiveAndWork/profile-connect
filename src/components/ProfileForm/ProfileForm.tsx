@@ -98,11 +98,13 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
 
       console.log('Existing profile by user_id:', existingProfile);
 
+      let finalProfileId: string;
+
       if (existingProfile) {
         console.log('Updating existing profile for preview...');
         // Update existing profile for preview
         await updateProfile(existingProfile.id, user);
-        setPreviewProfileId(existingProfile.id);
+        finalProfileId = existingProfile.id;
       } else {
         console.log('Checking for profile by email:', formData.email);
         // Check if a profile exists with the same email
@@ -120,7 +122,7 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
           if (!profileByEmail.user_id || profileByEmail.user_id === user.id) {
             console.log('Updating profile by email...');
             await updateProfile(profileByEmail.id, user);
-            setPreviewProfileId(profileByEmail.id);
+            finalProfileId = profileByEmail.id;
           } else {
             console.log('Email already used by another user');
             toast({
@@ -136,7 +138,7 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
           const profileId = await createProfile(user, true);
           console.log('Created profile ID:', profileId);
           if (profileId) {
-            setPreviewProfileId(profileId);
+            finalProfileId = profileId;
           } else {
             console.log('Failed to create profile');
             return;
@@ -144,7 +146,8 @@ export const ProfileForm = ({ onComplete }: ProfileFormProps) => {
         }
       }
       
-      console.log('Opening preview with profileId:', previewProfileId);
+      console.log('Opening preview with profileId:', finalProfileId);
+      setPreviewProfileId(finalProfileId);
       setPreviewOpen(true);
     } catch (error) {
       console.error('Error creating preview:', error);
