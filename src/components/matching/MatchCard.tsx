@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AIStatusBadge } from '@/components/ui/ai-status-badge';
+import { AdvancedAIBadge } from '@/components/ui/advanced-ai-badge';
 import { 
   Heart, 
   X, 
@@ -69,15 +70,22 @@ export const MatchCard = ({
                 {profile_preview.identite.headline}
               </p>
               
-              {/* Score de compatibilité */}
-              <div className="flex items-center gap-2">
+              {/* Score de compatibilité et badges IA */}
+              <div className="flex items-center gap-2 flex-wrap">
                 <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getScoreColor(compatibility_score)}`}>
                   <Heart className="w-3 h-3" />
                   Compatibilité {compatibility_score}/100
                 </div>
-                {reasons.some(r => r.includes('IA')) && (
-                  <AIStatusBadge variant="outline" />
-                )}
+                
+                {/* Détection des moteurs utilisés */}
+                <AdvancedAIBadge 
+                  engines={[
+                    'classic' as const,
+                    ...(reasons.some(r => r.includes('IA')) ? ['ai' as const] : []),
+                    ...(reasons.some(r => r.includes('LangChain')) ? ['langchain' as const] : []),
+                    ...(reasons.some(r => r.includes('Open Match')) ? ['openmatch' as const] : [])
+                  ]}
+                />
               </div>
             </div>
           </div>

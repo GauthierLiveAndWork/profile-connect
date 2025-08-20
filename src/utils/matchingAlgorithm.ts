@@ -1,5 +1,7 @@
 import { UserProfile, MatchSuggestion, ScoreComponents, MatchingWeights, DEFAULT_WEIGHTS } from '@/types/matching';
 import { aiMatchingOptimizer } from './aiMatchingOptimizer';
+import { langChainEngine } from './langChainMatching';
+import { openMatchEngine } from './openMatchEngine';
 
 /**
  * Algorithme de matching hybride pour Live&Work
@@ -371,74 +373,101 @@ export const injectExploration = (
 };
 
 /**
- * Fonction principale de matching avec optimisation IA
+ * Fonction principale de matching avec Open Match + LangChain + IA
  */
 export const suggestMatches = async (
   user: UserProfile, 
   pool: UserProfile[], 
   weights: MatchingWeights = DEFAULT_WEIGHTS
 ): Promise<MatchSuggestion[]> => {
-  // 1. Filtrage dur
-  const candidates = filterCandidates(user, pool);
+  console.log('🚀 Démarrage du matching multi-moteur (Classique + IA + LangChain + Open Match)');
   
-  // 2. Scoring de compatibilité
-  const scoredCandidates: MatchSuggestion[] = candidates.map(candidate => {
-    const { score, components } = calculateCompatibilityScore(user, candidate, weights);
-    const reasons = buildReasons(user, candidate, components);
-    
-    return {
-      id: candidate.user_id,
-      compatibility_score: Math.round(score),
-      reasons,
-      overlaps: {
-        valeurs: user.valeurs.filter(v => candidate.valeurs.includes(v)),
-        competences_supply: user.apporte.filter(s => candidate.recherche.includes(s)),
-        competences_demand: candidate.apporte.filter(s => user.recherche.includes(s))
-      },
-      next_best_action: score > 80 ? 'Proposer un créneau' : 
-                       score > 60 ? 'Envoyer un message' : 'Montrer votre intérêt',
-      profile_preview: {
-        identite: candidate.identite,
-        secteur: candidate.secteur,
-        badges: candidate.badges
-      }
-    };
-  });
-  
-  // 3. Tri par score
-  const sorted = scoredCandidates.sort((a, b) => b.compatibility_score - a.compatibility_score);
-  
-  // 4. Re-ranking MMR pour la diversité
-  const reranked = rerankWithMMR(sorted, 0.7);
-  
-  // 5. Injection d'exploration
-  const exploration = injectExploration(reranked, 0.2);
-  
-  // 6. Optimisation IA (nouvelle étape)
   try {
-    const aiOptimized = await aiMatchingOptimizer.optimizeMatches(user, exploration, pool);
+    // 1. Setup Open Match Engine
+    openMatchEngine.setupMatchPools();
+    openMatchEngine.cleanupExpiredTickets();
     
-    // 7. Découverte de profils cachés par l'IA
-    const hiddenGems = await aiMatchingOptimizer.discoverHiddenGems(user, pool, aiOptimized);
+    // 2. Créer un ticket pour l'utilisateur courant
+    const userTicket = openMatchEngine.createTicket(user);
+    
+    // 3. Créer des tickets pour tous les profils du pool
+    const poolTickets = pool
+      .filter(p => p.user_id !== user.user_id)
+      .map(profile => openMatchEngine.createTicket(profile));
+    
+    // 4. Générer matches Open Match
+    const openMatchResults = await openMatchEngine.generateMatches(userTicket);
+    const openMatchSuggestions = openMatchEngine.convertToMatchSuggestions(openMatchResults, pool);
+    
+    console.log(`📊 Open Match a généré ${openMatchSuggestions.length} suggestions`);
+    
+    // 5. Algorithme classique comme baseline
+    const candidates = filterCandidates(user, pool);
+    const classicSuggestions: MatchSuggestion[] = candidates.map(candidate => {
+      const { score, components } = calculateCompatibilityScore(user, candidate, weights);
+      const reasons = buildReasons(user, candidate, components);
+      
+      return {
+        id: candidate.user_id,
+        compatibility_score: Math.round(score),
+        reasons,
+        overlaps: {
+          valeurs: user.valeurs.filter(v => candidate.valeurs.includes(v)),
+          competences_supply: user.apporte.filter(s => candidate.recherche.includes(s)),
+          competences_demand: candidate.apporte.filter(s => user.recherche.includes(s))
+        },
+        next_best_action: score > 80 ? 'Proposer un créneau' : 
+                         score > 60 ? 'Envoyer un message' : 'Montrer votre intérêt',
+        profile_preview: {
+          identite: candidate.identite,
+          secteur: candidate.secteur,
+          badges: candidate.badges
+        }
+      };
+    });
+    
+    // 6. Fusionner et déduplicquer les suggestions
+    const combinedSuggestions = mergeAndDeduplicateSuggestions([
+      ...classicSuggestions,
+      ...openMatchSuggestions
+    ]);
+    
+    console.log(`🔄 ${combinedSuggestions.length} suggestions après fusion`);
+    
+    // 7. Re-ranking MMR pour la diversité
+    const reranked = rerankWithMMR(combinedSuggestions, 0.7);
+    
+    // 8. Injection d'exploration
+    const exploration = injectExploration(reranked, 0.2);
+    
+    // 9. Optimisation IA (Hugging Face)
+    const aiOptimized = await aiMatchingOptimizer.optimizeMatches(user, exploration, pool);
+    console.log(`🤖 IA a optimisé ${aiOptimized.length} suggestions`);
+    
+    // 10. Optimisation LangChain (OpenAI)
+    const langChainOptimized = await langChainEngine.optimizeMatches(user, aiOptimized, pool);
+    console.log(`🧠 LangChain a optimisé ${langChainOptimized.length} suggestions`);
+    
+    // 11. Découverte de profils cachés par l'IA
+    const hiddenGems = await aiMatchingOptimizer.discoverHiddenGems(user, pool, langChainOptimized);
     
     if (hiddenGems.length > 0) {
-      console.log(`IA a découvert ${hiddenGems.length} profils cachés intéressants`);
+      console.log(`💎 IA a découvert ${hiddenGems.length} profils cachés`);
       
-      // Intégrer quelques hidden gems dans les résultats
       const hiddenGemSuggestions = hiddenGems.slice(0, 2).map(profile => {
         const { score, components } = calculateCompatibilityScore(user, profile, weights);
         const reasons = buildReasons(user, profile, components);
         
         return {
           id: profile.user_id,
-          compatibility_score: Math.round(score * 1.1), // Bonus pour découverte IA
-          reasons: ['IA : Découverte intelligente', ...reasons].slice(0, 4),
+          compatibility_score: Math.round(score * 1.15), // Bonus pour découverte IA
+          reasons: ['💎 Découverte IA', ...reasons].slice(0, 4),
           overlaps: {
             valeurs: user.valeurs.filter(v => profile.valeurs.includes(v)),
             competences_supply: user.apporte.filter(s => profile.recherche.includes(s)),
             competences_demand: profile.apporte.filter(s => user.recherche.includes(s))
           },
-          next_best_action: 'Découverte IA - Explorer ce profil',
+          next_best_action: 'Profil découvert par IA - À explorer en priorité',
           profile_preview: {
             identite: profile.identite,
             secteur: profile.secteur,
@@ -447,17 +476,59 @@ export const suggestMatches = async (
         };
       });
       
-      // Mélanger les hidden gems dans les résultats
-      const final = [...aiOptimized.slice(0, 10), ...hiddenGemSuggestions].slice(0, 12);
+      // Intégrer les hidden gems
+      const final = [...langChainOptimized.slice(0, 10), ...hiddenGemSuggestions]
+        .slice(0, 12)
+        .sort((a, b) => b.compatibility_score - a.compatibility_score);
+      
+      console.log('✨ Matching multi-moteur terminé avec découvertes IA');
       return final;
     }
     
-    return aiOptimized.slice(0, 12);
+    console.log('✅ Matching multi-moteur terminé');
+    return langChainOptimized.slice(0, 12);
+    
   } catch (error) {
-    console.warn('Fallback vers matching classique:', error);
-    return exploration.slice(0, 12);
+    console.warn('⚠️ Erreur dans le matching multi-moteur, fallback vers algorithme classique:', error);
+    return suggestMatchesSync(user, pool, weights);
   }
 };
+
+/**
+ * Fusionne et déduplique les suggestions de différents moteurs
+ */
+function mergeAndDeduplicateSuggestions(suggestions: MatchSuggestion[]): MatchSuggestion[] {
+  const merged = new Map<string, MatchSuggestion>();
+  
+  for (const suggestion of suggestions) {
+    const existing = merged.get(suggestion.id);
+    
+    if (existing) {
+      // Fusionner les scores (moyenne pondérée)
+      const newScore = Math.round((existing.compatibility_score + suggestion.compatibility_score) / 2);
+      
+      // Fusionner les raisons (éviter doublons)
+      const combinedReasons = [...existing.reasons, ...suggestion.reasons];
+      const uniqueReasons = Array.from(new Set(combinedReasons)).slice(0, 4);
+      
+      // Garder la meilleure action
+      const bestAction = newScore > existing.compatibility_score 
+        ? suggestion.next_best_action 
+        : existing.next_best_action;
+      
+      merged.set(suggestion.id, {
+        ...existing,
+        compatibility_score: newScore,
+        reasons: uniqueReasons,
+        next_best_action: bestAction
+      });
+    } else {
+      merged.set(suggestion.id, suggestion);
+    }
+  }
+  
+  return Array.from(merged.values()).sort((a, b) => b.compatibility_score - a.compatibility_score);
+}
 
 /**
  * Version synchrone de la fonction de matching (pour compatibilité)
