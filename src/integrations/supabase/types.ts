@@ -375,7 +375,7 @@ export type Database = {
       }
     }
     Functions: {
-      get_public_profile_with_names: {
+      get_public_profile_safe: {
         Args: { profile_id: string }
         Returns: {
           bio: string
