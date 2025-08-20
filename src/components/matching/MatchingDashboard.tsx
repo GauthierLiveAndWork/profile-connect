@@ -177,8 +177,10 @@ export const MatchingDashboard = ({ userId, userProfile }: MatchingDashboardProp
 
       // Si nous avons un profil utilisateur (soit passé en prop, soit trouvé dans la DB)
       if (currentUserProfile && profiles.length > 0) {
-        // Utiliser l'algorithme de matching réel
-        const matchSuggestions = suggestMatches(currentUserProfile, profiles, weights);
+        console.log('Génération des suggestions avec IA...');
+        
+        // Utiliser l'algorithme de matching optimisé par IA
+        const matchSuggestions = await suggestMatches(currentUserProfile, profiles, weights);
         setSuggestions(matchSuggestions);
         
         setStats({
@@ -186,9 +188,11 @@ export const MatchingDashboard = ({ userId, userProfile }: MatchingDashboardProp
           avgScore: matchSuggestions.length > 0 
             ? Math.round(matchSuggestions.reduce((sum, s) => sum + s.compatibility_score, 0) / matchSuggestions.length)
             : 0,
-          newMatches: matchSuggestions.filter(s => s.compatibility_score > 70).length,
+          newMatches: matchSuggestions.filter(s => s.reasons.some(r => r.includes('IA'))).length,
           pendingMeetings: 2
         });
+        
+        console.log('Suggestions IA générées:', matchSuggestions.length);
       } else {
         // Fallback vers des données de démo si pas de profil utilisateur
         console.log('Pas de profil utilisateur trouvé, utilisation de données de démo');

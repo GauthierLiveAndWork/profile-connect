@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AIStatusBadge } from '@/components/ui/ai-status-badge';
 import { 
   Heart, 
   X, 
@@ -69,9 +70,14 @@ export const MatchCard = ({
               </p>
               
               {/* Score de compatibilité */}
-              <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getScoreColor(compatibility_score)}`}>
-                <Heart className="w-3 h-3" />
-                Compatibilité {compatibility_score}/100
+              <div className="flex items-center gap-2">
+                <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getScoreColor(compatibility_score)}`}>
+                  <Heart className="w-3 h-3" />
+                  Compatibilité {compatibility_score}/100
+                </div>
+                {reasons.some(r => r.includes('IA')) && (
+                  <AIStatusBadge variant="outline" />
+                )}
               </div>
             </div>
           </div>

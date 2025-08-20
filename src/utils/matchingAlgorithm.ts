@@ -1,4 +1,5 @@
 import { UserProfile, MatchSuggestion, ScoreComponents, MatchingWeights, DEFAULT_WEIGHTS } from '@/types/matching';
+import { aiMatchingOptimizer } from './aiMatchingOptimizer';
 
 /**
  * Algorithme de matching hybride pour Live&Work
@@ -370,9 +371,98 @@ export const injectExploration = (
 };
 
 /**
- * Fonction principale de matching
+ * Fonction principale de matching avec optimisation IA
  */
-export const suggestMatches = (
+export const suggestMatches = async (
+  user: UserProfile, 
+  pool: UserProfile[], 
+  weights: MatchingWeights = DEFAULT_WEIGHTS
+): Promise<MatchSuggestion[]> => {
+  // 1. Filtrage dur
+  const candidates = filterCandidates(user, pool);
+  
+  // 2. Scoring de compatibilité
+  const scoredCandidates: MatchSuggestion[] = candidates.map(candidate => {
+    const { score, components } = calculateCompatibilityScore(user, candidate, weights);
+    const reasons = buildReasons(user, candidate, components);
+    
+    return {
+      id: candidate.user_id,
+      compatibility_score: Math.round(score),
+      reasons,
+      overlaps: {
+        valeurs: user.valeurs.filter(v => candidate.valeurs.includes(v)),
+        competences_supply: user.apporte.filter(s => candidate.recherche.includes(s)),
+        competences_demand: candidate.apporte.filter(s => user.recherche.includes(s))
+      },
+      next_best_action: score > 80 ? 'Proposer un créneau' : 
+                       score > 60 ? 'Envoyer un message' : 'Montrer votre intérêt',
+      profile_preview: {
+        identite: candidate.identite,
+        secteur: candidate.secteur,
+        badges: candidate.badges
+      }
+    };
+  });
+  
+  // 3. Tri par score
+  const sorted = scoredCandidates.sort((a, b) => b.compatibility_score - a.compatibility_score);
+  
+  // 4. Re-ranking MMR pour la diversité
+  const reranked = rerankWithMMR(sorted, 0.7);
+  
+  // 5. Injection d'exploration
+  const exploration = injectExploration(reranked, 0.2);
+  
+  // 6. Optimisation IA (nouvelle étape)
+  try {
+    const aiOptimized = await aiMatchingOptimizer.optimizeMatches(user, exploration, pool);
+    
+    // 7. Découverte de profils cachés par l'IA
+    const hiddenGems = await aiMatchingOptimizer.discoverHiddenGems(user, pool, aiOptimized);
+    
+    if (hiddenGems.length > 0) {
+      console.log(`IA a découvert ${hiddenGems.length} profils cachés intéressants`);
+      
+      // Intégrer quelques hidden gems dans les résultats
+      const hiddenGemSuggestions = hiddenGems.slice(0, 2).map(profile => {
+        const { score, components } = calculateCompatibilityScore(user, profile, weights);
+        const reasons = buildReasons(user, profile, components);
+        
+        return {
+          id: profile.user_id,
+          compatibility_score: Math.round(score * 1.1), // Bonus pour découverte IA
+          reasons: ['IA : Découverte intelligente', ...reasons].slice(0, 4),
+          overlaps: {
+            valeurs: user.valeurs.filter(v => profile.valeurs.includes(v)),
+            competences_supply: user.apporte.filter(s => profile.recherche.includes(s)),
+            competences_demand: profile.apporte.filter(s => user.recherche.includes(s))
+          },
+          next_best_action: 'Découverte IA - Explorer ce profil',
+          profile_preview: {
+            identite: profile.identite,
+            secteur: profile.secteur,
+            badges: profile.badges
+          }
+        };
+      });
+      
+      // Mélanger les hidden gems dans les résultats
+      const final = [...aiOptimized.slice(0, 10), ...hiddenGemSuggestions].slice(0, 12);
+      return final;
+    }
+    
+    return aiOptimized.slice(0, 12);
+  } catch (error) {
+    console.warn('Fallback vers matching classique:', error);
+    return exploration.slice(0, 12);
+  }
+};
+
+/**
+ * Version synchrone de la fonction de matching (pour compatibilité)
+ */
+export const suggestMatchesSync = (
   user: UserProfile, 
   pool: UserProfile[], 
   weights: MatchingWeights = DEFAULT_WEIGHTS
