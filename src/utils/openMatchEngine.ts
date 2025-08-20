@@ -64,8 +64,9 @@ export class OpenMatchEngine {
         geo_latitude: profile.localisation.lat,
         geo_longitude: profile.localisation.lng,
         mobility_radius: profile.localisation.mobilite.rayon_km,
-        remote_ok: profile.localisation.mobilite.remote ? "1" : "0",
+        remote_ok: profile.localisation.mobilite.remote ? 1 : 0,
         last_active: this.daysSinceLastConnection(profile.activite.derniere_connexion),
+        open_to_matches: profile.etat.ouvert_aux_matches ? 1 : 0,
         
         // Champs textuels pour matching
         sectors: profile.secteur,
@@ -107,7 +108,7 @@ export class OpenMatchEngine {
           {
             field: "open_to_matches",
             operator: "EQUALS",
-            values: [true]
+            values: [1]
           },
           {
             field: "last_active",
@@ -129,7 +130,7 @@ export class OpenMatchEngine {
           {
             field: "open_to_matches",
             operator: "EQUALS",
-            values: [true]
+            values: [1]
           }
         ]
       },
@@ -141,7 +142,7 @@ export class OpenMatchEngine {
           {
             field: "open_to_matches",
             operator: "EQUALS",
-            values: [true]
+            values: [1]
           }
         ]
       },
