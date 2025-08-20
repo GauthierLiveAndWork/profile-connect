@@ -324,11 +324,11 @@ export type Database = {
           emotional_stability?: number | null
           extraversion?: number | null
           favorite_tools?: string[] | null
-          first_name?: string | null
+          first_name?: never
           id?: string | null
           job_role?: string | null
           languages?: Json | null
-          last_name?: string | null
+          last_name?: never
           location?: string | null
           main_objectives?: string[] | null
           openness?: number | null
@@ -353,11 +353,11 @@ export type Database = {
           emotional_stability?: number | null
           extraversion?: number | null
           favorite_tools?: string[] | null
-          first_name?: string | null
+          first_name?: never
           id?: string | null
           job_role?: string | null
           languages?: Json | null
-          last_name?: string | null
+          last_name?: never
           location?: string | null
           main_objectives?: string[] | null
           openness?: number | null
